@@ -12,6 +12,12 @@
   </head>
   <body>
     <h1>PayPal Google Calendar Demo:</h1>
+<div id='content'>
+          <h1>Events</h1>
+          <ul id='events'></ul>
+        </div>
+        <a href='#' id='authorize-button' onclick='handleAuthClick();'>Login</a>
+        
 
     <div class="contact-info m-5 p-5">
       <form>
@@ -111,7 +117,7 @@
           <div class="tour-item">
             <h3 id="tour-title">Dune ATV Tour</h3>
             <h4 id="tour-date">2019-02-14</h4>
-            <h5 id="tour-price">150.00</h5>
+            <h5 id="tour-price">15.00</h5>
           </div>
         <!-- <button type="submit" class="btn btn-primary" id="purchase-btn">Buy Now</button> -->
       </form>
@@ -157,6 +163,7 @@ client: {
 },
 
 payment: function (data, actions) {
+  const price = document.getElementById('tour-price')
   const paymentPrice = parseInt(price.innerText, 10)
   return actions.payment.create({
     payment: {
@@ -175,73 +182,128 @@ payment: function (data, actions) {
 onAuthorize: function (data, actions) {
   return actions.payment.execute()
     .then(function () {
+      // handleClientLoad();
       console.log("payment went through")
-      const CLIENT_ID = '788571287502-vnp4m235m3l4dt36bamoqtgme14h4pbv.apps.googleusercontent.com';
-      const API_KEY = 'AIzaSyAGo0O2fXtTGqopZpNUdgQ4BGXmdXWYJ5w';
-
       console.log(data)
-      // window.alert('Payment Complete!');
-      const firstName = document.getElementById('first-name')
-      const lastName = document.getElementById('last-name')
-      const email = document.getElementById('email')
-      const phone = document.getElementById('phone')
-      const street = document.getElementById('street')
-      const city = document.getElementById('city')
-      const state = document.getElementById('state')
-      const zip = document.getElementById('zip')
-      const price = document.getElementById('tour-price')
 
-      const eventID = data.orderID.toLowerCase()
+      var clientId = '';
+      var apiKey = '';
+      var scopes = 'https://www.googleapis.com/auth/calendar';
+            handleAuthClick(data);
+          
 
-      const buyer = {
-          name: {
-            first: firstName.value,
-            last: lastName.value
-          },
-          email: email.value,
-          phone: phone.value,
-          address: {
-            street: street.value,
-            city: city.value,
-            state: state.value,
-            zip: zip.value
-          }
+      function handleClientLoad() {
+        gapi.client.setApiKey(apiKey);
+        window.setTimeout(checkAuth,1);
+        checkAuth();
+      }
+
+      function checkAuth() {
+        console.log("checkAuth function")
+        gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true},
+            handleAuthResult);
+      }
+
+      function handleAuthResult(authResult) {
+        console.log("handAuthResult function")
+        console.log(data)
+        var authorizeButton = document.getElementById('authorize-button');
+        if (authResult) {
+          authorizeButton.style.visibility = 'hidden';
+          makeApiCall();
+        } else {
+          authorizeButton.style.visibility = '';
+          authorizeButton.onclick = handleAuthClick;
         }
+      }
 
-        console.log(buyer)
-        console.log(eventID)
+      function handleAuthClick(event, data) {
+        console.log(data)
+        console.log("handleAuthClick function")
+        gapi.auth.authorize(
+            {client_id: clientId, scope: scopes, immediate: false},
+            handleAuthResult);
+        return false;
+      }
 
-// Refer to the JavaScript quickstart on how to setup the environment:
-// https://developers.google.com/calendar/quickstart/js
-// Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
-// stored credentials.
 
-const event = {
-  'id': eventID,
-  'summary': 'Tour Booked',
-  'location': 'Cabo San Lucas, Mexico',
-  'description': document.getElementById('tour-title').innerText,
-  'start': {
-    'dateTime': document.getElementById('tour-date').innerText,
-    'timeZone': 'America/Los_Angeles'
-  },
-  'end': {
-    'dateTime': document.getElementById('tour-date').innerText,
-    'timeZone': 'America/Los_Angeles'
-  },
-  'attendee': [
-    {'email': 'goemailadrian@gmail.com'}
-  ]
-};
-console.log(event)
-var request = gapi.client.calendar.events.insert({
-  'calendarId': 'adriankyzer@gmail.com',
-  'resource': event
-});
+      function makeApiCall() {
+        console.log("making api call")
+        gapi.client.load('calendar', 'v3', function() {
+          // const eventID = data.orderID.toLowerCase()
 
-request.execute(function(event) {
-  appendPre('Event created: ' + event.htmlLink);
-});
+          // window.alert('Payment Complete!');
+          const firstName = document.getElementById('first-name')
+          const lastName = document.getElementById('last-name')
+          const email = document.getElementById('email')
+          const phone = document.getElementById('phone')
+          const street = document.getElementById('street')
+          const city = document.getElementById('city')
+          const state = document.getElementById('state')
+          const zip = document.getElementById('zip')
+          const price = document.getElementById('tour-price')
+
+          const buyer = {
+              name: {
+                first: firstName.value,
+                last: lastName.value
+              },
+              email: email.value,
+              phone: phone.value,
+              address: {
+                street: street.value,
+                city: city.value,
+                state: state.value,
+                zip: zip.value
+              }
+            }
+
+            console.log(buyer)
+
+      // Refer to the JavaScript quickstart on how to setup the environment:
+      // https://developers.google.com/calendar/quickstart/js
+      // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
+      // stored credentials.
+
+      const event = {
+      // 'id': "asdfsdf89798797sdfasd",
+      'summary': 'My Tour',
+      'location': 'Cabo San Lucas, Mexico',
+      'description': document.getElementById('tour-title').innerText,
+      'start': {
+        'date': '2019-03-02',
+        'timeZone': 'America/Los_Angeles'
+      },
+      'end': {
+        'date': '2019-03-03',
+        'timeZone': 'America/Los_Angeles'
+      },
+      'attendee': [
+        {'email': 'goemailadrian@gmail.com'}
+      ]
+      };
+      // console.log(event)
+      // var request = gapi.client.calendar.events.insert({
+      // 'calendarId': 'adriankyzer@gmail.com',
+      // 'resource': event
+      // });
+
+      // request.execute(function(event) {
+      // appendPre('Event created: ' + event.htmlLink);
+      // });
+    // console.log(event)
+      var request = gapi.client.calendar.events.insert({
+        'calendarId': 'adriankyzer@gmail.com',
+        'resource': event
+      });
+      
+      request.execute(function(event) {
+        console.log(event)
+        appendPre('Event created: ' + event.htmlLink);
+      });
+    
+    });
+}
 
     });
 }
@@ -253,8 +315,9 @@ request.execute(function(event) {
     
 
 
-      <!-- <script src="https://www.paypalobjects.com/api/checkout.js" async></script> -->
-      <script src="https://apis.google.com/js/api.js"></script>
+    <!-- <script src="https://www.paypalobjects.com/api/checkout.js" async></script> -->
+    <script src="https://apis.google.com/js/api.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
