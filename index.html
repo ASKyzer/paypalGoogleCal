@@ -448,8 +448,8 @@ onAuthorize: function (data, actions) {
       console.log("payment went through")
       console.log(data)
 
-      var clientId = '';
-      var apiKey = '';
+      var clientId = 'Client_ID';
+      var apiKey = 'API_Key';
       var scopes = 'https://www.googleapis.com/auth/calendar';
             
       handleAuthClick();    
@@ -537,6 +537,42 @@ onAuthorize: function (data, actions) {
           // https://developers.google.com/calendar/quickstart/js
           // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
           // stored credentials.
+          function listUpcomingEvents() {
+
+              var request = gapi.client.calendar.events.list({
+              'calendarId': 'primary', /* Can be 'primary' or a given calendarid */
+              // 'timeMin': (new Date()).toISOString(),
+              // 'showDeleted': false,
+              // 'singleEvents': true,
+              // 'maxResults': 10,
+              // 'orderBy': 'startTime'
+            });
+
+              request.execute(function(resp) {
+                var events = resp.items;
+                console.log(events)
+                if (events.length > 0) {
+                  const tours = events.filter(e => {
+                    // console.log(e.summary)
+                })
+              }
+          // console.log(tours)
+          // appendPre('Upcoming events:');
+          // if (events.length > 0) {
+          //   for (i = 0; i < events.length; i++) {
+          //     var event = events[i];
+          //     var when = event.start.dateTime;
+          //     if (!when) {
+          //       when = event.start.date;
+          //     }
+          //     appendPre(event.summary + ' (' + when + ')')
+          //   }
+          // } else {
+          //   appendPre('No upcoming events found.');
+          // }
+        });
+      }
+      listUpcomingEvents(summary);
 
           const event = {
             // 'id': eventID,
@@ -564,9 +600,8 @@ onAuthorize: function (data, actions) {
           
           request.execute(function(event) {
             console.log(event)
-            appendPre('Event created: ' + event.htmlLink);
+            appendPre('Event created: ' + event.htmlLink);            
           });
-
         });
       }
     });
