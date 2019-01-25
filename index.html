@@ -376,7 +376,7 @@
         <div class="shopping-cart">
           <h3>Item: <span id="tour-title">Dune ATV Tour</span></h3>
           <h6>Description: <span id="tour-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint officia, corporis velit veniam facere obcaecati aperiam quas similique molestias animi, ex eveniet! Accusamus magni, facere repellat dolorum dicta aut vel.</span></h6>
-          <h4>Date: <span id="tour-date">2019-02-14</span></h4>
+          <h4>Dates: <span id="tour-start-date">2019-02-14</span> to <span id="tour-end-date">2019-02-14</span></h4>
           <h5>$ <span id="tour-price">15.00</span> USD</h5>
           <h5>Location: <span id="tour-location">San Jose del Cabo</span></h5>
         </div>
@@ -444,13 +444,12 @@ payment: function (data, actions) {
 onAuthorize: function (data, actions) {
   return actions.payment.execute()
     .then(function () {
-      // handleClientLoad();
       console.log("payment went through")
       console.log(data)
 
-      var clientId = 'Client_ID';
-      var apiKey = 'API_Key';
-      var scopes = 'https://www.googleapis.com/auth/calendar';
+      const clientId = '';
+      const apiKey = '';
+      const scopes = 'https://www.googleapis.com/auth/calendar';
             
       handleAuthClick();    
 
@@ -489,8 +488,8 @@ onAuthorize: function (data, actions) {
 
       function makeApiCall(data) {
         console.log("making api call")
-
         gapi.client.load('calendar', 'v3', function() {
+          // get value for all form and tour fields
           const firstName = document.getElementById('first-name')
           const lastName = document.getElementById('last-name')
           const email = document.getElementById('email')
@@ -505,7 +504,8 @@ onAuthorize: function (data, actions) {
           const description = document.getElementById('tour-description').innerText
           const summary = document.getElementById('tour-title').innerText
           const location = document.getElementById('tour-location').innerText
-          const date = document.getElementById('tour-date').innerText
+          const startDate = document.getElementById('tour-start-date').innerText
+          const endDate = document.getElementById('tour-end-date').innerText
 
           const orderNumber = data.orderID;
 
@@ -533,58 +533,17 @@ onAuthorize: function (data, actions) {
 
             console.log(buyer)
 
-          // Refer to the JavaScript quickstart on how to setup the environment:
-          // https://developers.google.com/calendar/quickstart/js
-          // Change the scope to 'https://www.googleapis.com/auth/calendar' and delete any
-          // stored credentials.
-          function listUpcomingEvents() {
-
-              var request = gapi.client.calendar.events.list({
-              'calendarId': 'primary', /* Can be 'primary' or a given calendarid */
-              // 'timeMin': (new Date()).toISOString(),
-              // 'showDeleted': false,
-              // 'singleEvents': true,
-              // 'maxResults': 10,
-              // 'orderBy': 'startTime'
-            });
-
-              request.execute(function(resp) {
-                var events = resp.items;
-                console.log(events)
-                if (events.length > 0) {
-                  const tours = events.filter(e => {
-                    // console.log(e.summary)
-                })
-              }
-          // console.log(tours)
-          // appendPre('Upcoming events:');
-          // if (events.length > 0) {
-          //   for (i = 0; i < events.length; i++) {
-          //     var event = events[i];
-          //     var when = event.start.dateTime;
-          //     if (!when) {
-          //       when = event.start.date;
-          //     }
-          //     appendPre(event.summary + ' (' + when + ')')
-          //   }
-          // } else {
-          //   appendPre('No upcoming events found.');
-          // }
-        });
-      }
-      listUpcomingEvents(summary);
-
           const event = {
             // 'id': eventID,
             'summary': `${summary}, ${orderNumber}`,
             'location': location,
             'description': description,
             'start': {
-              'date': date,
+              'date': startDate,
               'timeZone': 'America/Los_Angeles'
             },
             'end': {
-              'date': date,
+              'date': endDate,
               'timeZone': 'America/Los_Angeles'
             },
             'attendees': [
@@ -593,14 +552,16 @@ onAuthorize: function (data, actions) {
           };
           
           const request = gapi.client.calendar.events.insert({
-            'calendarId': 'primary',
+            'calendarId': 'adriankyzer@gmail.com',
+            'sendNotifications': true,
+            'sendUpdates': 'all',
             'resource': event
           });
           console.log(event)
           
           request.execute(function(event) {
             console.log(event)
-            appendPre('Event created: ' + event.htmlLink);            
+            console.log("Event inserted successfully into OTDH calendar and email sent to the buyer.")
           });
         });
       }
@@ -618,6 +579,6 @@ onAuthorize: function (data, actions) {
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
-    <script src="app.js"></script>
+    <!-- <script src="app.js"></script> -->
   </body>
 </html>

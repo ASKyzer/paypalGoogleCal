@@ -15,5 +15,6 @@
   "bugs": {
     "url": "https://github.com/ASKyzer/paypalGoogleCal/issues"
   },
-  "homepage": "https://github.com/ASKyzer/paypalGoogleCal#readme"
+  "homepage": "https://github.com/ASKyzer/paypalGoogleCal#readme",
+  "dependencies": {}
 }
