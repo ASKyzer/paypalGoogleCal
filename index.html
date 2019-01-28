@@ -12,48 +12,55 @@
   </head>
   <body>
     <h1>PayPal Google Calendar Demo:</h1>
+    <br>
     <div class="container-fluid p-5">
-      <div class="contact-info mt-5 mb-2 p-3">
-        <form>
+      <h4 id="tour-cards-title">Tour Card:</h4>
+      <div id="tour-cards" class="row h-100">
+        <!-- Cards dynamically generated here -->
+      </div>
+      <br>
+      <h4 class="checkout" >Checkout:</h4>
+      <div class="contact-info mt-5 mb-2 p-3 checkout">
+        <form class=""  id="buyer-form">
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="first-name">First Name</label>
-              <input type="text" class="form-control" id="first-name" placeholder="First Name">
+              <input type="text" name="firstName" required="required" class="form-control" id="first-name" placeholder="First Name">
             </div>
             <div class="form-group col-md-6">
               <label for="last-name">Last Name</label>
-              <input type="text" class="form-control" id="last-name" placeholder="Last name">
+              <input type="text" name="lastName" required="required" class="form-control" id="last-name" placeholder="Last name">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-6">
               <label for="email">Email Address</label>
-              <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+              <input type="email" name="email" required="required"  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
               <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
             </div>
             <div class="form-group col-md-6">
               <label for="phone">Phone</label>
-              <input type="number" class="form-control" id="phone" placeholder="Phone">
+              <input type="number" name="phone" required="required"  class="form-control" id="phone" placeholder="Phone">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-8">
               <label for="street">Address</label>
-              <input type="text" class="form-control" id="street" placeholder="1234 Main St">
+              <input type="text" name="street"  required="required" class="form-control" id="street" placeholder="1234 Main St">
             </div>
             <div class="form-group col-md-4">
               <label for="street2">Address 2</label>
-              <input type="text" class="form-control" id="street2" placeholder="Apartment, studio, or floor">
+              <input type="text" name="street2"  class="form-control" id="street2" placeholder="Apartment, studio, or floor">
             </div>
           </div>
           <div class="form-row">
             <div class="form-group col-md-5">
               <label for="city">City</label>
-              <input type="text" class="form-control" id="city">
+              <input type="text" name="city" required="required"  class="form-control" id="city">
             </div>
             <div class="form-group col-md-3">
               <label for="state">State</label>
-                <select class="form-control" id="state" name="state">
+                <select  name="state" required="required" class="form-control" id="state">
                   <option value="">N/A</option>
                   <option value="AK">Alaska</option>
                   <option value="AL">Alabama</option>
@@ -111,11 +118,11 @@
             </div>
             <div class="form-group col-md-2">
               <label for="zip">Zip</label>
-              <input type="text" class="form-control" id="zip">
+              <input type="text" name="zip"  required="required" class="form-control" id="zip">
             </div>
             <div class="form-group col-md-2">
               <label for="country">Country</label>
-              <select class="form-control" id="country" name="country"> 
+              <select  name="country" required="required" class="form-control" id="country"> 
                 <option value="" selected="selected">Select Country</option> 
                 <option value="United States">United States</option> 
                 <option value="United Kingdom">United Kingdom</option> 
@@ -361,20 +368,26 @@
               </select>
             </div>
           </div>
+          <div class="form-group row mt-4">
+              <label for="tour-date" class="col-6 col-form-label d-flex justify-content-end">Please choose a day you'd like to book this tour.</label>
+              <div class="col-6 d-flex justify-content-start">
+                <input class="date-picker" required="required" type="date" name="date"  value="2019-01-25" id="tour-date">
+              </div>
+            </div>
         </form>
       </div>
       <br>
-      <div class="tour-item">
+      <div  class="checkout" class="tour-item">
         <div class="shopping-cart">
-          <h3>Item: <span id="tour-title">Dune ATV Tour</span></h3>
-          <h6>Description: <span id="tour-description">Lorem ipsum dolor sit amet consectetur adipisicing elit. Sint officia, corporis velit veniam facere obcaecati aperiam quas similique molestias animi, ex eveniet! Accusamus magni, facere repellat dolorum dicta aut vel.</span></h6>
-          <h4>Dates: <span id="tour-start-date">2019-02-01</span> to <span id="tour-end-date">2019-02-05</span></h4>
-          <h5>$ <span id="tour-price">15.00</span> USD</h5>
-          <h5>Location: <span id="tour-location">San Jose del Cabo</span></h5>
+          <h3>Item: <span id="tour-title"></span></h3>
+          <h6>Description: <span id="tour-description"></span></h6>
+          <!-- <h4>Dates: <span id="tour-start-date">2019-01-28</span> to <span id="tour-end-date">2019-02-01</span></h4> -->
+          <h5>$ <span id="tour-price"></span> USD</h5>
+          <h5>Location: <span id="tour-location"></span></h5>
         </div>
       </div>
       <br/>
-      <div id="paypal-button-container"></div>
+      <div class="checkout"  id="paypal-button-container"></div>
     </div>
 
     <!-- PayPal and Google Calendar API scripts -->
