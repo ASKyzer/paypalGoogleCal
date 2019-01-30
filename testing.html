@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- required="required"  meta tags -->
+    <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -18,33 +18,36 @@
       <!-- Cards dynamically generated here -->
     </div>
     <div class="mt-5 mb-2 p-3 contact-form">
-      <h4 class="" >Please enter your contact information:</h4>
-      <form class=""  id="buyer-form" onsubmit="checkOut(); false">
+      <h4 class="" >Checkout:</h4>
+      <form class="was-validated"  id="buyer-form">
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="first-name">First Name</label>
-            <input type="text" name="firstName" class="form-control" id="first-name" placeholder="First Name" required="required" />
+            <input type="text" name="firstName" class="form-control" id="first-name" placeholder="First Name" required/>
+            <div class="invalid-feedback">
+              Please choose a username.
+            </div>
           </div>
           <div class="form-group col-md-6">
             <label for="last-name">Last Name</label>
-            <input type="text" name="lastName" class="form-control" id="last-name" placeholder="Last name" required="required"  />
+            <input type="text" name="lastName" class="form-control" id="last-name" placeholder="Last name" required />
           </div>
         </div>
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="email">Email Address</label>
-            <input type="email" name="email" required="required"   class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+            <input type="email" name="email" required  class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
             <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
           </div>
           <div class="form-group col-md-6">
             <label for="phone">Phone</label>
-            <input type="number" name="phone" required="required"   class="form-control" id="phone" placeholder="Phone">
+            <input type="number" name="phone" required  class="form-control" id="phone" placeholder="Phone">
           </div>
         </div>
         <div class="form-row">
           <div class="form-group col-md-8">
             <label for="street">Address</label>
-            <input type="text" name="street"  required="required"  class="form-control" id="street" placeholder="1234 Main St">
+            <input type="text" name="street"  required class="form-control" id="street" placeholder="1234 Main St">
           </div>
           <div class="form-group col-md-4">
             <label for="street2">Address 2</label>
@@ -54,12 +57,12 @@
         <div class="form-row">
           <div class="form-group col-md-5">
             <label for="city">City</label>
-            <input type="text" name="city" required="required"   class="form-control" id="city">
+            <input type="text" name="city" required  class="form-control" id="city">
           </div>
           <div class="form-group col-md-3">
             <label for="state">State</label>
-              <select  name="state" required="required"  class="form-control" id="state">
-                <option value="" selected="selected">N/A</option> 
+              <select  name="state" required class="form-control" id="state">
+                <option value="">N/A</option>
                 <option value="AK">Alaska</option>
                 <option value="AL">Alabama</option>
                 <option value="AR">Arkansas</option>
@@ -116,11 +119,11 @@
           </div>
           <div class="form-group col-md-2">
             <label for="zip">Zip</label>
-            <input type="text" name="zip"  required="required"  class="form-control" id="zip">
+            <input type="text" name="zip"  required class="form-control" id="zip">
           </div>
           <div class="form-group col-md-2">
             <label for="country">Country</label>
-            <select  name="country" required="required"  class="form-control" id="country"> 
+            <select  name="country" required class="form-control" id="country"> 
               <option value="" selected="selected">Select Country</option> 
               <option value="United States">United States</option> 
               <option value="United Kingdom">United Kingdom</option> 
@@ -369,34 +372,28 @@
         <div class="form-group row mt-4">
           <label for="tour-date" class="col-6 col-form-label d-flex justify-content-end">Please choose a day you'd like to book this tour.</label>
           <div class="col-6 d-flex justify-content-start">
-            <input class="date-picker form-control" required="required"  type="date" name="date"  value="yyyy-mm-dd" id="tour-date">
+            <input class="date-picker" required type="date" name="date"  value="yyyy-mm-dd" id="tour-date">
           </div>
         </div>
-        <button class="btn btn-warning" id="submit-contact-info" type="submit" onclick="">Continue to Checkout</button>
+        <button class="btn btn-warning" type="submit">Submit form</button>
       </form>
-      <br>
-      <div class="shopping-cart">
-          <h3>Item: <span class="tour-title"></span></h3>
-          <h6>Description: <span class="tour-description"></span></h6>
-          <!-- <h4>Dates: <span id="tour-start-date">2019-01-28</span> to <span id="tour-end-date">2019-02-01</span></h4> -->
-          <h5>$ <span class="tour-price"></span> USD</h5>
-          <h5>Location: <span class="tour-location"></span></h5>
-        </div>
     </div>
     <br>
     <div  class="checkout" class="tour-item">
-      <h2>Checkout:</h2>
       <div class="customer-info">
-        <!-- Customer info goes here at checkout -->
+        <p><span class="customer-first-name">sdfasdf</span>&nbsp;<span class="customer-last-name"></span></p>
+        <p><span class="customer-street">asdfasd</span></p>
+        <p><span class="customer-city">asdfasd</span>&nbsp;<span class="customer-state">asdfasd</span>&nbsp;<span class="customer-zip">sdafdsf</span>,&nbsp;<span class="customer-country">asfas</span></p>
+        <p><span class="customer-email">asdfasdf</span></p>
+        <p><span class="customer-phone">asdfasdf</span></p>
       </div>
       <div class="shopping-cart">
-          <h3>Item: &nbsp;<span class="tour-title"></span></h3>
-          <h6>Description: &nbsp;<span class="tour-description"></span></h6>
-          <!-- <h4>Dates: <span id="tour-start-date">2019-01-28</span> to <span id="tour-end-date">2019-02-01</span></h4> -->
-          <h5>$ &nbsp;<span class="tour-price"></span> USD</h5>
-          <h5>Location: &nbsp;<span class="tour-location"></span></h5>
-          <h5>Date: &nbsp;<span class="tour-date"></span></h5>
-        </div>
+        <h3>Item: <span id="tour-title">Dune ATV Tour</span></h3>
+        <h6>Description: <span id="tour-description">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Veniam dolorum, sit dolor quasi nisi, reprehenderit unde quaerat dignissimos ullam rem impedit illo assumenda earum consequatur explicabo voluptatibus, mollitia culpa et!</span></h6>
+        <!-- <h4>Dates: <span id="tour-start-date">2019-01-28</span> to <span id="tour-end-date">2019-02-01</span></h4> -->
+        <h5>$ <span id="tour-price">15.00</span> USD</h5>
+        <h5>Location: <span id="tour-location">Cabo San Lucas</span></h5>
+      </div>
     </div>
     <br/>
     <div class="checkout"  id="paypal-button-container"></div>
