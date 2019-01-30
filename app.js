@@ -56,8 +56,8 @@ paypal.Button.render({
     
     return actions.payment.execute()
       .then(function () {
-        const clientId = '';
-        const apiKey = '';
+        const clientId = 'CLIENT_ID';
+        const apiKey = 'API_KEY';
         const scopes = 'https://www.googleapis.com/auth/calendar';
         
         // Authorize owner's Google Calendar
@@ -279,7 +279,7 @@ The Ocean Tigers Dive House Staff
   $("#buyer-form").submit(function(e){ e.preventDefault(); });
   
   function getPackages() {
-    const token = '';
+    const token = 'DATO_CMS_TOKEN';
      // Fetch packages from DatoCMS
      fetch(
       'https://graphql.datocms.com/',
@@ -330,7 +330,6 @@ The Ocean Tigers Dive House Staff
       '11' : 'November',
       '12' : 'December'
   }
-
     const dateArr = date.split('-')
     const year = dateArr[0]
     const day = dateArr[2]
