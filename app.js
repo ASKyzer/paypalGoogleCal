@@ -90,54 +90,44 @@ paypal.Button.render({
         
         function createCalendarEvent(data) {
           gapi.client.load('calendar', 'v3', function() {
-            // Creat buyer object from form using jQuery .serializeArray
-            const myForm = $("form").serializeArray()
-              let buyer = {} 
-              $.each(myForm, function(i, field){  
-                  buyer[field.name] = field.value
-              })
-              console.log(buyer)
             
-            const price = parseFloat(document.getElementById('tour-price').innerText)
-            const description = document.getElementById('tour-description').innerText
-            const title = document.getElementById('tour-title').innerText
-            const location = document.getElementById('tour-location').innerText
-            
-            const orderNumber = data.orderID;
+            const buyer = getFormInputInfo()            
+            const tour = purchasedTourInfo()
+            const orderNumber = data.orderID
   
-  // Email markup for letter to send with Google calendar invite to buyer
-  const emailMarkup = `
-  Dear ${buyer.firstName} ${buyer.lastName},
-  
-  Thank you for choosing to book your adventures with Ocean Tigers Dive House.
-  
-  <h3>Tour Information:</h3> 
-  <b>Tour:</b> ${title}
-  <b>Summary:</b> ${description}
-  <b>Tour Dates:</b> ${buyer.date}
-  <b>Tour Price:</b> ${price}
-  <b>Order No.:</b> ${orderNumber}
-  
-  <h3>Your Information:</h3>
-  <b>Name:</b> ${buyer.firstName} ${buyer.lastName}
-  <b>Address:</b> ${buyer.street} 
-                ${buyer.city}, ${buyer.state} ${buyer.zip}, ${buyer.country}
-  <b>Email:</b> ${buyer.email}
-  <b>Phone:</b> ${buyer.phone}
-  
-  Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at oceantigersdivehouse@gmail.com.  
-  
-  We look forward to joining you in this incredible adventure.
-  
-  Sincerely,
-  
-  The Ocean Tigers Dive House Staff
-  `;
+// Email markup for letter to send with Google calendar invite to buyer
+const emailMarkup = `
+Dear ${buyer.firstName} ${buyer.lastName},
+
+Thank you for choosing to book your adventures with Ocean Tigers Dive House.
+
+<h3>Tour Information:</h3> 
+<b>Tour:</b> ${tour.title}
+<b>Summary:</b> ${tour.description}
+<b>Tour Date:</b> ${buyer.date}
+<b>Tour Price: </b>$ ${tour.price}
+<b>Order No.:</b> ${orderNumber}
+
+<h3>Your Information:</h3>
+<b>Name:</b> ${buyer.firstName} ${buyer.lastName}
+<b>Address:</b> ${buyer.street} 
+              ${buyer.city}, ${buyer.state} ${buyer.zip}, ${buyer.country}
+<b>Email:</b> ${buyer.email}
+<b>Phone:</b> ${buyer.phone}
+
+Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at oceantigersdivehouse@gmail.com.  
+
+We look forward to joining you in this incredible adventure.
+
+Sincerely,
+
+The Ocean Tigers Dive House Staff
+`;
   
             const event = {
               // 'id': eventID, // Will be automaticall generated
-              'summary': `${title}, ${orderNumber}`,
-              'location': location,
+              'summary': `${tour.title}, ${orderNumber}`,
+              'location': tour.location,
               'description': emailMarkup,
               'start': {
                 'date': buyer.date,
@@ -174,21 +164,28 @@ paypal.Button.render({
   const cardsHeader = document.getElementById('tour-cards-title')
   const checkoutForm = document.querySelectorAll('.checkout')
   
-  // Allow date on the date picker to always be today
-  // const date = new Date()
-  // let month = date.getMonth() + 1
-  // if (month < 10) { month = "0" + month }
-  // document.querySelector('.date-picker').value = date.getFullYear() + "-" + month + "-" + date.getDate();
-  function tourAtCheckout() {
-
+  function getFormInputInfo() {
+    const myForm = $("form").serializeArray()
+    const data = {}
+      $.each(myForm, function(i, field){ data[field.name] = field.value })
+      return data
   }
+
+  function purchasedTourInfo() {
+    return {
+      price:  parseFloat(document.getElementById('tour-price').innerText),
+      description: document.getElementById('tour-description').innerText,
+      title: document.getElementById('tour-title').innerText,
+      location: document.getElementById('tour-location').innerText
+    } 
+  }
+
   function showCards() {
     cardsDiv.style.display = 'flex'
     cardsHeader.style.display = 'block'
   }
   
   function populateCards(packages) {
-    console.log(packages)
     packages.forEach(p => {
       const markup = `
         <div class="col-lg-4 col-md-6 mt-3">
@@ -198,10 +195,10 @@ paypal.Button.render({
             <div class="card-body">
               <p class="card-text tour" data-id="description" id="card-tour-description">${p.description}</p>
               <p class="card-text tour" data-id="location" id="card-tour-location">${p.location}</p>
-              <p class="card-text">$ <span class="tour" data-id="price" id="card-tour-price">${parseInt(p.price, 10)}</span> USD</p>
+              <p class="card-text">$ <span class="tour" data-id="price" id="card-tour-price">${parseFloat(p.price)}</span> USD</p>
             </div>
             <div class="p-4">
-                <a href="#" class="btn btn-warning purchase-tour" id="purchase-tour">Buy Now</a>
+                <a href="#" class="btn btn-warning purchase-tour border-dark" id="purchase-tour">Buy Now</a>
             </div>
           </div>
         </div>
@@ -224,7 +221,7 @@ paypal.Button.render({
   }
   
   // Listen for Buy Now click event
-  cardsDiv.addEventListener('click', getTourInfo) 
+ $(cardsDiv).on('click', getChosenTourInfo) 
   
   function addTourToCheckout(tour) {
     document.getElementById('tour-title').innerText = tour.title
@@ -233,16 +230,12 @@ paypal.Button.render({
     document.getElementById('tour-location').innerText = tour.location
   }
   
-  function getTourInfo(e) {
-    // Get tour info from the clicked card
+  function getChosenTourInfo(e) {
     // Target card and see if there's a buy now button and then target the classes for their values???
     if(e.target.classList.contains('purchase-tour')) {
       const data = (event.target).closest('#tourCards').querySelectorAll('.tour')
       let chosenTour = {}
-      for (let i = 0; i < data.length; i++) {
-        chosenTour[data[i].dataset.id] = data[i].innerText
-      }
-      console.log(chosenTour)
+      data.forEach(el => chosenTour[el.dataset.id] = el.innerText )
       checkOut(chosenTour)
     }
     e.preventDefault()
@@ -252,7 +245,7 @@ paypal.Button.render({
       addTourToCheckout(tour)
       hidePackages()
       displayCheckout()
-  } 
+    } 
   
   function getPackages() {
     const token = '';
