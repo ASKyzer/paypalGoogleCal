@@ -37,7 +37,6 @@ paypal.Button.render({
   
   payment: function (data, actions) {
     const price = document.querySelector('#tour-price')
-    console.log(price)
     const paymentPrice = parseInt(price.innerText, 10)
     return actions.payment.create({
       payment: {
@@ -96,6 +95,8 @@ paypal.Button.render({
             const tour = purchasedTourInfo()
             const convertedDate = convertDate(buyer.date)
             const orderNumber = data.orderID
+            let state = buyer.state
+            if (state === "N/A") { state = "" }
   
 // Email markup for letter to send with Google calendar invite to buyer
 const emailMarkup = `
@@ -113,7 +114,8 @@ Thank you for choosing to book your adventures with Ocean Tigers Dive House.
 <h3>Your Information:</h3>
 <b>Name:</b> ${buyer.firstName} ${buyer.lastName}
 <b>Address:</b> ${buyer.street} 
-              ${buyer.city}, ${buyer.state} ${buyer.zip}, ${buyer.country}
+            ${buyer.city}, ${state} ${buyer.zip} 
+            ${buyer.country}
 <b>Email:</b> ${buyer.email}
 <b>Phone:</b> ${buyer.phone}
 
@@ -161,7 +163,7 @@ The Ocean Tigers Dive House Staff
         $('#contactModal').modal('hide'); 
         hideCheckout()
         hideContactForm()
-        showPackages()
+        // showPackages()
       });
     }
   }, '#paypal-button-container')
@@ -197,10 +199,7 @@ The Ocean Tigers Dive House Staff
     } 
   }
 
-  function hidePackages() {
-    cardsDiv.style.display = 'none'
-    cardsHeader.style.display = 'none'
-  }
+  
   function showPackages() {
     cardsDiv.style.display = 'flex'
     cardsHeader.style.display = 'block'
@@ -242,8 +241,8 @@ The Ocean Tigers Dive House Staff
   }
 
   function addTourToCheckout(tour) {
-    console.log(tour)
     const shoppingCart = document.querySelectorAll('.shopping-cart')
+    if (tour) {
     const markup = `
         <div class="">
           <div class="card mb-3 h-100" id="tourCards">
@@ -256,8 +255,10 @@ The Ocean Tigers Dive House Staff
             </div>
           </div>
         </div>
-        `
-    shoppingCart.forEach(el => el.innerHTML = markup)
+        ` 
+        shoppingCart.forEach(el => el.innerHTML = markup)
+
+    }
   }
   
   function getChosenTourInfo(e) {
@@ -276,11 +277,8 @@ The Ocean Tigers Dive House Staff
     const buyer = getFormInputInfo()
     const convertedDate = convertDate(buyer.date)
     let state = buyer.state
-    console.log(state)
-    if (state == "N/A") {
-      state = ""
-    }
-    console.log(state)
+    if (state == "N/A") {state = "" }
+
     const markup = `
       <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
       <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
@@ -310,6 +308,14 @@ The Ocean Tigers Dive House Staff
 
   // Target continue to checkout button and prevent the default action
   $("#buyer-form").submit(function(e){ e.preventDefault(); });
+
+  // Prevent customer from choosing past dates
+  const dt= new Date();
+  const yyyy = dt.getFullYear().toString();
+  const mm = (dt.getMonth()+1).toString(); // getMonth() is zero-based
+  const dd  = dt.getDate().toString();
+  const min = yyyy +'-'+ (mm[1]?mm:"0"+mm[0]) +'-'+ (dd[1]?dd:"0"+dd[0]); // padding
+  $('#tour-date').prop('min',min);
   
   // HTTP fecth call to database and retrieving all packages using graphql
   function getPackages() {
@@ -375,8 +381,8 @@ The Ocean Tigers Dive House Staff
   
   function init() {
     getPackages()
-    hideCheckout()
-    hideContactForm()
+    // hideCheckout()
+    // hideContactForm()
   }
   init()
 
