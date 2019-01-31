@@ -36,7 +36,8 @@ paypal.Button.render({
   },
   
   payment: function (data, actions) {
-    const price = document.querySelector('.tour-price')
+    const price = document.querySelector('#tour-price')
+    console.log(price)
     const paymentPrice = parseInt(price.innerText, 10)
     return actions.payment.create({
       payment: {
@@ -52,14 +53,12 @@ paypal.Button.render({
     });
   },
   
-  onAuthorize: function (data, actions) {
-    
+  onAuthorize: function (data, actions) {    
     return actions.payment.execute()
       .then(function () {
-       
-        const clientId = 'CLIENT_ID';
-        const apiKey = 'API_KEY';
-        const scopes = 'https://www.googleapis.com/auth/calendar';
+         // const clientId = 'CLIENT_ID';
+        // const apiKey = 'API_KEY';
+        // const scopes = 'https://www.googleapis.com/auth/calendar';
         
         // Authorize owner's Google Calendar
         handleAuth();    
@@ -106,7 +105,7 @@ Thank you for choosing to book your adventures with Ocean Tigers Dive House.
 <b>Tour:</b> ${tour.title}
 <b>Summary:</b> ${tour.description}
 <b>Tour Dates:</b> ${buyer.date}
-<b>Tour Price:</b> ${tour.price}
+<b>Tour Price: $</b> ${tour.price.toFixed(2)} USD
 <b>Order No.:</b> ${orderNumber}
 
 <h3>Your Information:</h3>
@@ -167,11 +166,7 @@ The Ocean Tigers Dive House Staff
   const checkoutForm = document.querySelectorAll('.checkout')
   const contactForm = document.querySelector('.contact-form')
   const contactSubmit = document.getElementById('submit-contact-info')
-  const tourTitle = document.querySelectorAll('.tour-title')
-  const tourDescription = document.querySelectorAll('.tour-description')
-  const tourLocation = document.querySelectorAll('.tour-location')
-  const tourPrice = document.querySelectorAll('.tour-price')
-
+  
   function hideContactForm() { contactForm.style.display = 'none' }
   function showContactForm() { contactForm.style.display = 'block' }
 
@@ -184,11 +179,17 @@ The Ocean Tigers Dive House Staff
   }
 
   function purchasedTourInfo() {
+    const tourTitle = document.querySelector('#tour-title')
+    const tourDescription = document.querySelector('#tour-description')
+    const tourLocation = document.querySelector('#tour-location')
+    const tourPrice = document.querySelector('#tour-price')
+
+    console.log(tourPrice, tourDescription, tourTitle, tourLocation)
     return {
-      price: parseFloat(tourPrice[0].innerText),
-      description: tourDescription[0].innerText,
-      title: tourTitle[0].innerText,
-      location: tourLocation[0].innerText
+      price: parseFloat(tourPrice.innerText),
+      description: tourDescription.innerText,
+      title: tourTitle.innerText,
+      location: tourLocation.innerText
     } 
   }
 
@@ -206,15 +207,15 @@ The Ocean Tigers Dive House Staff
       const markup = `
         <div class="col-lg-4 col-md-6 mt-3">
           <div class="card mb-3 h-100" id="tourCards">
-            <img src="${p.imageUrl}" class="card-img-top" alt="${p.name}">
-            <h5 class="card-header tour pl-4 pr-4 pt-2 pb-2 bg-warning border-dark" data-id="title" id="card-tour-name">${p.name}</h5>
+            <img src="${p.imageUrl}" data-value="${p.imageUrl}" data-id="imageUrl" class="card-img-top tour" alt="${p.name}">
+            <h5 class="card-header tour pl-4 pr-4 pt-2 pb-2 bg-warning border-dark" data-value="${p.name}" data-id="title" id="card-tour-title">${p.name}</h5>
             <div class="card-body">
-              <p class="card-text tour" data-id="description" id="card-tour-description">${p.description}</p>
-              <p class="card-text tour" data-id="location" id="card-tour-location">${p.location}</p>
-              <p class="card-text">$ <span class="tour" data-id="price" id="card-tour-price">${parseFloat(p.price)}</span> USD</p>
+              <p class="card-text tour" data-value="${p.description}" data-id="description" id="card-tour-description">${p.description}</p>
+              <p class="card-text tour" data-value="${p.location}" data-id="location" id="card-tour-location">${p.location}</p>
+              <p class="card-text">$ <span class="tour tour-price" data-value="${parseFloat(p.price)}" data-id="price" id="card-tour-price">${parseFloat(p.price)}</span> USD</p>
             </div>
             <div class="p-4">
-                <a href="#" class="btn btn-warning purchase-tour border-dark" id="purchase-tour">Buy Now</a>
+                <a href="#" class="btn btn-warning purchase-tour border-dark" data-toggle="modal" data-target="#exampleModalLong" id="purchase-tour">Buy Now</a>
             </div>
           </div>
         </div>
@@ -231,16 +232,28 @@ The Ocean Tigers Dive House Staff
 
   function openContactForm(e) {
     const tour = getChosenTourInfo(e)
-    hidePackages()
+    // hidePackages()
     showContactForm()
     addTourToCheckout(tour)
   }
 
   function addTourToCheckout(tour) {
-    tourTitle.forEach(el => el.innerText = tour.title)
-    tourDescription.forEach(el => el.innerText = tour.description)
-    tourLocation.forEach(el => el.innerText = tour.location)
-    tourPrice.forEach(el => el.innerText = tour.price)
+    console.log(tour)
+    const shoppingCart = document.querySelectorAll('.shopping-cart')
+    const markup = `
+        <div class="">
+          <div class="card mb-3 h-100" id="tourCards">
+            <img src="${tour.imageUrl}" data-value="${tour.imageUrl}" data-id="imageUrl" class="card-img-top tour" alt="${tour.title}">
+            <h5 class="card-header tour pl-4 pr-4 pt-2 pb-2 bg-warning border-dark" data-value="${tour.title}" data-id="title" id="tour-title">${tour.title}</h5>
+            <div class="card-body">
+              <p class="card-text tour" data-value="${tour.description}" data-id="description" id="tour-description">${tour.description}</p>
+              <p class="card-text tour" data-value="${tour.location}" data-id="location" id="tour-location">${tour.location}</p>
+              <p class="card-text">$ <span class="tour" data-value="${parseFloat(tour.price)}" data-id="price" id="tour-price">${parseFloat(tour.price)}</span> USD</p>
+            </div>
+          </div>
+        </div>
+        `
+    shoppingCart.forEach(el => el.innerHTML = markup)
   }
   
   function getChosenTourInfo(e) {
@@ -248,7 +261,7 @@ The Ocean Tigers Dive House Staff
     if(e.target.classList.contains('purchase-tour')) {
       const data = (event.target).closest('#tourCards').querySelectorAll('.tour')
       let chosenTour = {}
-      data.forEach(el => chosenTour[el.dataset.id] = el.innerText )
+      data.forEach(el => chosenTour[el.dataset.id] = el.dataset.value)
       return chosenTour
     }
     e.preventDefault()
@@ -256,7 +269,6 @@ The Ocean Tigers Dive House Staff
 
   function addCustomerToCheckout() {
     const customer = document.querySelector('.customer-info')
-    const date = document.querySelector('.tour-date')
     const buyer = getFormInputInfo()
     const convertedDate = convertDate(buyer.date)
 
@@ -264,13 +276,14 @@ The Ocean Tigers Dive House Staff
       <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
       <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
       <p class="m-0"><span class="customer-street">${buyer.street}</span></p>
-      <p class="m-0"><span class="customer-city">${buyer.city}</span>&nbsp;<span class="customer-state">${buyer.state}</span>&nbsp;<span class="customer-zip">${buyer.zip}</span>,&nbsp;<span class="customer-country">${buyer.country}</span></p>
+      <p class="m-0"><span class="customer-city">${buyer.city}</span>&nbsp;<span class="customer-state">${buyer.state}</span>&nbsp;<span class="customer-zip">${buyer.zip}</span></p>
+      <p class="m-0"><span class="customer-country">${buyer.country}</span></p>
       <p class="m-0"><span class="customer-email">${buyer.email}</span></p>
-      <p class="m-0 mb-3"><span class="customer-phone">${buyer.phone}</span></p>
+      <p class="m-0 mb-3"><span class="customer-phone">${buyer.phone}</span></p><br>
+      <h5>Tour Date: &nbsp;<span class="tour-date">${convertedDate}</span></h5>
     `;
 
     customer.innerHTML = markup
-    date.innerText = convertedDate
   }
   
   // Hide contact for and show the checkout with paypal buttons
@@ -285,7 +298,7 @@ The Ocean Tigers Dive House Staff
   
   // HTTP fecth call to database and retrieving all packages using graphql
   function getPackages() {
-    const token = 'DATO_CMS_TOKEN';
+    // const token = 'DATO_CMS_TOKEN';
      // Fetch packages from DatoCMS
      fetch(
       'https://graphql.datocms.com/',
