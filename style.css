@@ -4,3 +4,7 @@
   background-color: #eee;
   box-shadow: 2px 2px 10px #ccc;
 }
+
+.modal {
+  overflow-y: auto !important;
+}

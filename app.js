@@ -56,7 +56,8 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {    
     return actions.payment.execute()
       .then(function () {
-         // const clientId = 'CLIENT_ID';
+        
+        // const clientId = 'CLIENT_ID';
         // const apiKey = 'API_KEY';
         // const scopes = 'https://www.googleapis.com/auth/calendar';
         
@@ -93,6 +94,7 @@ paypal.Button.render({
           gapi.client.load('calendar', 'v3', function() {
             const buyer = getFormInputInfo()            
             const tour = purchasedTourInfo()
+            const convertedDate = convertDate(buyer.date)
             const orderNumber = data.orderID
   
 // Email markup for letter to send with Google calendar invite to buyer
@@ -104,7 +106,7 @@ Thank you for choosing to book your adventures with Ocean Tigers Dive House.
 <h3>Tour Information:</h3> 
 <b>Tour:</b> ${tour.title}
 <b>Summary:</b> ${tour.description}
-<b>Tour Dates:</b> ${buyer.date}
+<b>Tour Dates:</b> ${convertedDate}
 <b>Tour Price: $</b> ${tour.price.toFixed(2)} USD
 <b>Order No.:</b> ${orderNumber}
 
@@ -155,7 +157,10 @@ The Ocean Tigers Dive House Staff
             });
           });
         }
+        $('#checkoutModal').modal('hide');
+        $('#contactModal').modal('hide'); 
         hideCheckout()
+        hideContactForm()
         showPackages()
       });
     }
@@ -184,7 +189,6 @@ The Ocean Tigers Dive House Staff
     const tourLocation = document.querySelector('#tour-location')
     const tourPrice = document.querySelector('#tour-price')
 
-    console.log(tourPrice, tourDescription, tourTitle, tourLocation)
     return {
       price: parseFloat(tourPrice.innerText),
       description: tourDescription.innerText,
@@ -215,7 +219,7 @@ The Ocean Tigers Dive House Staff
               <p class="card-text">$ <span class="tour tour-price" data-value="${parseFloat(p.price)}" data-id="price" id="card-tour-price">${parseFloat(p.price)}</span> USD</p>
             </div>
             <div class="p-4">
-                <a href="#" class="btn btn-warning purchase-tour border-dark" data-toggle="modal" data-target="#exampleModalLong" id="purchase-tour">Buy Now</a>
+                <a href="#" class="btn btn-warning purchase-tour border-dark" data-toggle="modal" data-target="#contactModal" id="purchase-tour">Buy Now</a>
             </div>
           </div>
         </div>
@@ -271,12 +275,17 @@ The Ocean Tigers Dive House Staff
     const customer = document.querySelector('.customer-info')
     const buyer = getFormInputInfo()
     const convertedDate = convertDate(buyer.date)
-
+    let state = buyer.state
+    console.log(state)
+    if (state == "N/A") {
+      state = ""
+    }
+    console.log(state)
     const markup = `
       <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
       <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
       <p class="m-0"><span class="customer-street">${buyer.street}</span></p>
-      <p class="m-0"><span class="customer-city">${buyer.city}</span>&nbsp;<span class="customer-state">${buyer.state}</span>&nbsp;<span class="customer-zip">${buyer.zip}</span></p>
+      <p class="m-0"><span class="customer-city">${buyer.city}</span>&nbsp;<span class="customer-state">${state}</span>&nbsp;<span class="customer-zip">${buyer.zip}</span></p>
       <p class="m-0"><span class="customer-country">${buyer.country}</span></p>
       <p class="m-0"><span class="customer-email">${buyer.email}</span></p>
       <p class="m-0 mb-3"><span class="customer-phone">${buyer.phone}</span></p><br>
@@ -288,10 +297,16 @@ The Ocean Tigers Dive House Staff
   
   // Hide contact for and show the checkout with paypal buttons
   function checkOut(){
+    $('#checkoutModal').modal('toggle');
+    $('#contactModal').modal('toggle');
     addCustomerToCheckout()
-    hideContactForm()
+    // hideContactForm()
     displayCheckout()
-  } 
+  }
+  
+  $('#goBackBtn').on('click', function() {
+    $('#contactModal').modal('toggle');
+  })
 
   // Target continue to checkout button and prevent the default action
   $("#buyer-form").submit(function(e){ e.preventDefault(); });
@@ -364,6 +379,7 @@ The Ocean Tigers Dive House Staff
     hideContactForm()
   }
   init()
+
   
   
   
