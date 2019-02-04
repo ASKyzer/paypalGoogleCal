@@ -55,8 +55,7 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {   
     return actions.payment.execute()
       .then(function () {
-       
-        // const clientId = 'CLIENT_ID';
+         // const clientId = 'CLIENT_ID';
         // const apiKey = 'API_KEY';
         // const scopes = 'https://www.googleapis.com/auth/calendar';
         
@@ -257,11 +256,12 @@ function purchasedTourInfo() {
 cardsDiv.addEventListener('click', openContactForm) 
 
 function openContactForm(e) {
+  validateEmail()
+  validateFields()
   // Get chosen tour and pass it along to addTourToCheckout()
   const tour = getChosenTourInfo(e)
   addTourToCheckout(tour)
 }
-
 // with chosen tour, display it on the contact form and checkout form
 function addTourToCheckout(tour) {
   const shoppingCart = document.querySelectorAll('.shopping-cart')
@@ -326,11 +326,31 @@ function addCustomerToCheckout() {
 
 // Validate email while entering it and when the submit button is pressed
 const email = document.getElementById('email')
+const firstName = document.getElementById('first-name')
+const lastName = document.getElementById('last-name')
+const phone = document.getElementById('phone')
+const date = document.getElementById('tour-date')
 const submitContactBtn = document.getElementById('submit-contact-info')
-  email.addEventListener('keyup', validateEmail)
-  submitContactBtn.addEventListener('click', validateEmail)
+  
+email.addEventListener('keyup', function() {
+    validateEmail()
+    validateFields()
+  })
+firstName.addEventListener('keyup', validateFields)
+lastName.addEventListener('keyup', validateFields)
+phone.addEventListener('keyup', validateFields)
+firstName.addEventListener('keyup', validateFields)
+date.addEventListener('change', validateFields)
+  
+  
+    submitContactBtn.addEventListener('click', function() {
+    console.log('clicked')
+    validateFields()
+    validateEmail()
+  })
 
 function validateEmail() {
+  console.log('validating email')
   const emailHelp = document.getElementById('emailHelp')
   const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
   
@@ -346,6 +366,33 @@ function validateEmail() {
     email.classList.add('invalidEmail:focus')
     emailHelp.style.display = "block"
     return false
+  }
+}
+
+function validateFields() {
+  const firstName = document.getElementById('first-name')
+  const lastName = document.getElementById('last-name')
+  const phone = document.getElementById('phone')
+  const date = document.getElementById('tour-date')
+  if ( firstName.value === ''  ) {
+    firstName.classList.add('invalidEmail')
+  } else {
+    firstName.classList.remove('invalidEmail')
+  }
+  if ( lastName.value === ''  ) {
+    lastName.classList.add('invalidEmail')
+  } else {
+    lastName.classList.remove('invalidEmail')
+  }
+  if ( phone.value === ''  ) {
+    phone.classList.add('invalidEmail')
+  } else {
+    phone.classList.remove('invalidEmail')
+  }
+  if ( date.value === ''  ) {
+    date.classList.add('invalidEmail')
+  } else {
+    date.classList.remove('invalidEmail')
   }
 }
 
@@ -472,6 +519,6 @@ function init() {
 } 
 init()
 
-  
+
   
   
