@@ -55,7 +55,7 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {   
     return actions.payment.execute()
       .then(function () {
-        // const clientId = 'CLIENT_ID';
+       // const clientId = 'CLIENT_ID';
         // const apiKey = 'API_KEY';
         // const scopes = 'https://www.googleapis.com/auth/calendar';
         
@@ -244,8 +244,6 @@ function purchasedTourInfo() {
 cardsDiv.addEventListener('click', openContactForm) 
 
 function openContactForm(e) {
-  validateEmail()
-  validateFields()
   emailHelp.style.display = 'none'
 
   // Get chosen tour and pass it along to addTourToCheckout()
@@ -312,25 +310,14 @@ function addCustomerToCheckout() {
 }
 
 // Validate email while entering it and when the submit button is pressed
-const email = document.getElementById('email')
-const firstName = document.getElementById('first-name')
-const lastName = document.getElementById('last-name')
-const phone = document.getElementById('phone')
-const date = document.getElementById('tour-date')
-const submitContactBtn = document.getElementById('submit-contact-info')
-
 // Event Listeners for form fields validation
+const email = document.getElementById('email')
+const submitContactBtn = document.getElementById('submit-contact-info')
+const formFields = document.querySelectorAll('.formField')
+
+formFields.forEach(field => $(field).on('keyup change', validateFields))
 email.addEventListener('keyup', validateEmail)
-firstName.addEventListener('keyup', validateFields)
-lastName.addEventListener('keyup', validateFields)
-phone.addEventListener('keyup', validateFields)
-firstName.addEventListener('keyup', validateFields)
-date.addEventListener('change', validateFields)
-  
-submitContactBtn.addEventListener('click', function() {
-  validateFields()
-  validateEmail()
-})
+submitContactBtn.addEventListener('click', validateEmail)
 
 function validateEmail() {
   const emailHelp = document.getElementById('emailHelp')
@@ -348,30 +335,18 @@ function validateEmail() {
 }
 
 function validateFields() {
-if ( firstName.value === ''  ) {
-    firstName.classList.add('invalid')
-  } else {
-    firstName.classList.remove('invalid')
-  }
-  if ( lastName.value === ''  ) {
-    lastName.classList.add('invalid')
-  } else {
-    lastName.classList.remove('invalid')
-  }
-  if ( phone.value === ''  ) {
-    phone.classList.add('invalid')
-  } else {
-    phone.classList.remove('invalid')
-  }
-  if ( date.value === ''  ) {
-    date.classList.add('invalid')
-  } else {
-    date.classList.remove('invalid')
-  }
+  formFields.forEach(field => {
+    field.classList.add('invalid')
+    if (field.value !== '' ) {
+      field.classList.remove('invalid')
+    }
+  })
 }
 
 function validateForm() {
+  if(validateEmail()){
     checkOut()
+  }
 }
 
 // Hide contact modal and show the checkout modal with paypal buttons
