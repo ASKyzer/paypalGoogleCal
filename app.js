@@ -55,7 +55,7 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {   
     return actions.payment.execute()
       .then(function () {
-         // const clientId = 'CLIENT_ID';
+        // const clientId = 'CLIENT_ID';
         // const apiKey = 'API_KEY';
         // const scopes = 'https://www.googleapis.com/auth/calendar';
         
@@ -94,10 +94,9 @@ paypal.Button.render({
             const tour = purchasedTourInfo()
             const convertedDate = convertDate(buyer.date)
             const orderNumber = data.orderID
-            let state = buyer.state
-              if (state === "N/A") { state = "" }
-                  
-            writeThankYouNote(buyer, tour, convertedDate, orderNumber, state)
+            console.log(buyer, tour)
+            
+            writeThankYouNote(buyer, tour, convertedDate, orderNumber)
   
 // Email markup for letter to send with Google calendar invite to buyer
 const emailMarkup = `
@@ -116,9 +115,6 @@ Thank you for choosing to book your adventures with Ocean Tigers Dive House.
 
 <b>Your Information:</b>
 <b>Name:</b> ${buyer.firstName} ${buyer.lastName}
-<b>Address:</b> ${buyer.street} 
-            ${buyer.city}, ${state} ${buyer.zip} 
-            ${buyer.country}
 <b>Email:</b> ${buyer.email}
 <b>Phone:</b> +${buyer.phone}
 
@@ -129,7 +125,6 @@ We look forward to joining you in this incredible adventure.
 Sincerely,
 
 The Ocean Tigers Dive House Staff
-<img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="text-center img img-responsive img-fluid logo" alt="OTDH Logo" />
 
 
 `;
@@ -164,32 +159,25 @@ The Ocean Tigers Dive House Staff
             })
           })
 
-          function writeThankYouNote(buyer, tour, date, orderNumber, state) {
+          function writeThankYouNote(buyer, tour, date, orderNumber) {
+            console.log(buyer, tour)
+            console.log("writing thank you note")
             const thankYou = document.querySelector('#thank-you')
             const thankYouModalMarkup = `
               <div class="p-3">
                 <p>Dear ${buyer.firstName} ${buyer.lastName},</p>
                 <p>Thank you for choosing to book your adventures with Ocean Tigers Dive House.</p>
-          
+                <p>An email has been sent to you with a Google Calendar invite to this event.<p>
+
                 <p class="m-0"><b >Tour Information:</b></p>
                 <p class="m-0"><b>Tour:</b> ${tour.title}</p>
-                <p class="m-0"><b>Summary:</b> ${tour.description}</p>
                 <p class="m-0"><b>Tour Date:</b> ${date}</p>
                 <p class="m-0"><b>Tour Price: $</b> ${tour.price} USD</p>
                 <p class="m-0"><b>Deopsit: $</b> ${tour.deposit} USD</p>
                 <p class="m-0"><b>Order No.:</b> ${orderNumber}</p>
                 <br>
                 <p class="m-0"><b>Your Information:</b></p>
-                <p class="m-0"><b>Name:</b> ${buyer.firstName} ${buyer.lastName}</p>
-                
-                <div class="row d-flex">
-                  <div class="col-sm-2 col-xs-12"><b>Address:</b></div>
-                  <div class="col-sm-10 col-sx-12 mr-auto">
-                      <p class="m-0">${buyer.street}</p>
-                      <p class="m-0">${buyer.city}, ${state} ${buyer.zip}</p>
-                      <p class="m-0">${buyer.country}</p>
-                  </div>
-                </div>            
+                <p class="m-0"><b>Name:</b> ${buyer.firstName} ${buyer.lastName}</p>        
                 <p class="m-0"><b>Email:</b> ${buyer.email}</p>
                 <p class="m-0"><b>Phone:</b> +${buyer.phone}</p>
                 <br>
@@ -258,6 +246,8 @@ cardsDiv.addEventListener('click', openContactForm)
 function openContactForm(e) {
   validateEmail()
   validateFields()
+  emailHelp.style.display = 'none'
+
   // Get chosen tour and pass it along to addTourToCheckout()
   const tour = getChosenTourInfo(e)
   addTourToCheckout(tour)
@@ -314,9 +304,6 @@ function addCustomerToCheckout() {
   const markupTourCard = `
     <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
     <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
-    <p class="m-0"><span class="customer-street">${buyer.street}</span></p>
-    <p class="m-0"><span class="customer-city">${buyer.city}</span>&nbsp;<span class="customer-state">${state}</span>&nbsp;<span class="customer-zip">${buyer.zip}</span></p>
-    <p class="m-0"><span class="customer-country">${buyer.country}</span></p>
     <p class="m-0 mt-1"><span class="customer-email">${buyer.email}</span></p>
     <p class="m-0 mb-3"><span class="customer-phone">+${buyer.phone}</span></p><br>
     <h5>Tour Date: &nbsp;<span class="tour-date">${convertedDate}</span></h5>
@@ -331,77 +318,60 @@ const lastName = document.getElementById('last-name')
 const phone = document.getElementById('phone')
 const date = document.getElementById('tour-date')
 const submitContactBtn = document.getElementById('submit-contact-info')
-  
-email.addEventListener('keyup', function() {
-    validateEmail()
-    validateFields()
-  })
+
+// Event Listeners for form fields validation
+email.addEventListener('keyup', validateEmail)
 firstName.addEventListener('keyup', validateFields)
 lastName.addEventListener('keyup', validateFields)
 phone.addEventListener('keyup', validateFields)
 firstName.addEventListener('keyup', validateFields)
 date.addEventListener('change', validateFields)
   
-  
-    submitContactBtn.addEventListener('click', function() {
-    console.log('clicked')
-    validateFields()
-    validateEmail()
-  })
+submitContactBtn.addEventListener('click', function() {
+  validateFields()
+  validateEmail()
+})
 
 function validateEmail() {
-  console.log('validating email')
   const emailHelp = document.getElementById('emailHelp')
   const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
   
-  email.classList.remove('shake-horizontal')
-  
   if (emailRegExp.test(email.value)) {
-    email.classList.remove('invalidEmail')
-    email.classList.remove('invalidEmail:focus')
+    email.classList.remove('invalid')
     emailHelp.style.display = 'none'
     return true
   } else {
-    email.classList.add('invalidEmail')
-    email.classList.add('invalidEmail:focus')
+    email.classList.add('invalid')
     emailHelp.style.display = "block"
     return false
   }
 }
 
 function validateFields() {
-  const firstName = document.getElementById('first-name')
-  const lastName = document.getElementById('last-name')
-  const phone = document.getElementById('phone')
-  const date = document.getElementById('tour-date')
-  if ( firstName.value === ''  ) {
-    firstName.classList.add('invalidEmail')
+if ( firstName.value === ''  ) {
+    firstName.classList.add('invalid')
   } else {
-    firstName.classList.remove('invalidEmail')
+    firstName.classList.remove('invalid')
   }
   if ( lastName.value === ''  ) {
-    lastName.classList.add('invalidEmail')
+    lastName.classList.add('invalid')
   } else {
-    lastName.classList.remove('invalidEmail')
+    lastName.classList.remove('invalid')
   }
   if ( phone.value === ''  ) {
-    phone.classList.add('invalidEmail')
+    phone.classList.add('invalid')
   } else {
-    phone.classList.remove('invalidEmail')
+    phone.classList.remove('invalid')
   }
   if ( date.value === ''  ) {
-    date.classList.add('invalidEmail')
+    date.classList.add('invalid')
   } else {
-    date.classList.remove('invalidEmail')
+    date.classList.remove('invalid')
   }
 }
 
 function validateForm() {
-  if (validateEmail()) {
     checkOut()
-  } else {
-    email.classList.add('shake-horizontal')
-  }
 }
 
 // Hide contact modal and show the checkout modal with paypal buttons
