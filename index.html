@@ -22,7 +22,7 @@
       <div class="modal fade contat-form" id="contactModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalTitle" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content contact-form">
-            <div class="modal-header bg-warning contact">
+            <div class="modal-header bg-warning contact border-dark">
               <h4 class="modal-title" id="checkoutModalTitle">Please enter your contact information</h4>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -30,7 +30,7 @@
             </div>
             <div class="modal-body">
               <div class="p-3 contact-form">
-                <form class="mb-5"  id="buyer-form" onsubmit="checkOut(); false">
+                <form class="mb-5"  id="buyer-form" onsubmit="validateForm(); false">
                   <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="first-name">First Name</label>
@@ -45,7 +45,7 @@
                     <div class="form-group col-md-6">
                       <label for="email">Email Address</label>
                       <input type="email" name="email" required="required"   class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
-                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                      <small id="emailHelp" class="form-text text-danger text-danger">Please enter a valid email address</small>
                     </div>
                     <div class="form-group col-md-6">
                       <label for="phone">Phone</label>
@@ -372,7 +372,7 @@
                     </div>
                     <div class="form-group col-md-3">
                       <label for="zip">Zip</label>
-                      <input type="number" name="zip"  required="required"  class="form-control" id="zip">
+                      <input type="text" name="zip"  required="required" class="form-control" id="zip">
                     </div>
                   </div>
                   <div class="form-group row mt-3 mb-3 d-flex align-items-center">
@@ -404,7 +404,7 @@
       <div class="modal fade checkout" id="checkoutModal" tabindex="-1" role="dialog" aria-labelledby="checkoutModalTitle2" aria-hidden="true">
         <div class="modal-dialog" role="document">
           <div class="modal-content">
-            <div class="modal-header bg-warning">
+            <div class="modal-header bg-warning border-dark">
               <h2 class="modal-title" id="checkoutModalTitle2">Checkout</h2>
               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
@@ -418,10 +418,10 @@
                   </div> 
                 </div>
                 <div class="row d-flex justify-content-around mt-3 pr-4">
-                  <div class="col-8">
+                  <div class="col-sm-8">
                     <div class="checkout mb-5" id="paypal-button-container"></div>
                   </div>
-                  <div class="col-4 cost-charged text-center justify-content-center align-items-start">
+                  <div class="col-sm-4 cost-charged text-center justify-content-center align-items-start">
                     <!-- Price that will be charged displayed here. -->
                   </div>
                 </div>
@@ -442,15 +442,17 @@
     <div class="modal fade" id="thankYouModal" tabindex="-1" role="dialog" aria-labelledby="thankYouModalTitle" aria-hidden="true">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header bg-warning">
+          <div class="modal-header bg-warning border-dark">
             <h2 class="modal-title" id="thankYouModalTitle">Thank You</h2>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
               <span aria-hidden="true">&times;</span>
             </button>
           </div>
           <div class="modal-body" id="thank-you">
-            Thank you for choosing your adventures with Ocean Tigers Dive House.
-            <img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="text-center img img-responsive img-fluid" alt="OTDH Logo" />
+            <p class="pl-5 pr-5 text-center">Thank you for choosing your adventures with Ocean Tigers Dive House.</p>
+            <div class="logo d-flex justify-content-center">
+              <img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="text-center img img-responsive img-fluid logo" alt="OTDH Logo" />
+            </div>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-warning border-dark" data-dismiss="modal">Close</button>

@@ -36,26 +36,26 @@ paypal.Button.render({
   },
   
   payment: function (data, actions) {
-    const price = document.querySelector('#tour-price')
-    const paymentPrice = parseInt(price.innerText, 10)
+    const deposit = document.querySelector('#tour-deposit').innerText    
+    
     return actions.payment.create({
       payment: {
         transactions: [
           {
             amount: {
-              total: paymentPrice,
+              total: deposit,
               currency: 'USD'
             }
           }
         ]
       }
-    });
+    })
   },
   
-  onAuthorize: function (data, actions) {    
+  onAuthorize: function (data, actions) {   
     return actions.payment.execute()
       .then(function () {
-        
+       
         // const clientId = 'CLIENT_ID';
         // const apiKey = 'API_KEY';
         // const scopes = 'https://www.googleapis.com/auth/calendar';
@@ -90,14 +90,13 @@ paypal.Button.render({
         }
         
         function createCalendarEvent(data) {
-
           gapi.client.load('calendar', 'v3', function() {
             const buyer = getFormInputInfo()            
             const tour = purchasedTourInfo()
             const convertedDate = convertDate(buyer.date)
             const orderNumber = data.orderID
             let state = buyer.state
-            if (state === "N/A") { state = "" }
+              if (state === "N/A") { state = "" }
                   
             writeThankYouNote(buyer, tour, convertedDate, orderNumber, state)
   
@@ -110,8 +109,10 @@ Thank you for choosing to book your adventures with Ocean Tigers Dive House.
 <b style="font-size: 44px;">Tour Information:</b> 
 <b>Tour:</b> ${tour.title}
 <b>Summary:</b> ${tour.description}
-<b>Tour Dates:</b> ${convertedDate}
-<b>Tour Price: $</b> ${tour.price.toFixed(2)} USD
+<b>Tour Date:</b> ${convertedDate}
+<b>Tour Price: $</b> ${tour.price} USD
+<b>Tour Deposit: $</b> ${tour.deposit} USD
+
 <b>Order No.:</b> ${orderNumber}
 
 <b>Your Information:</b>
@@ -129,6 +130,8 @@ We look forward to joining you in this incredible adventure.
 Sincerely,
 
 The Ocean Tigers Dive House Staff
+<img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="text-center img img-responsive img-fluid logo" alt="OTDH Logo" />
+
 
 `;
             
@@ -155,16 +158,15 @@ The Ocean Tigers Dive House Staff
               'sendNotifications': true,
               'sendUpdates': 'all',
               'resource': event
-            });
+            })
             
             request.execute(function(event) {
               console.log(event)
-            });
-          });
+            })
+          })
 
           function writeThankYouNote(buyer, tour, date, orderNumber, state) {
             const thankYou = document.querySelector('#thank-you')
-            console.log(thankYou)
             const thankYouModalMarkup = `
               <div class="p-3">
                 <p>Dear ${buyer.firstName} ${buyer.lastName},</p>
@@ -173,16 +175,17 @@ The Ocean Tigers Dive House Staff
                 <p class="m-0"><b >Tour Information:</b></p>
                 <p class="m-0"><b>Tour:</b> ${tour.title}</p>
                 <p class="m-0"><b>Summary:</b> ${tour.description}</p>
-                <p class="m-0"><b>Tour Dates:</b> ${date}</p>
-                <p class="m-0"><b>Tour Price: $</b> ${tour.price.toFixed(2)} USD</p>
+                <p class="m-0"><b>Tour Date:</b> ${date}</p>
+                <p class="m-0"><b>Tour Price: $</b> ${tour.price} USD</p>
+                <p class="m-0"><b>Deopsit: $</b> ${tour.deposit} USD</p>
                 <p class="m-0"><b>Order No.:</b> ${orderNumber}</p>
                 <br>
                 <p class="m-0"><b>Your Information:</b></p>
                 <p class="m-0"><b>Name:</b> ${buyer.firstName} ${buyer.lastName}</p>
                 
                 <div class="row d-flex">
-                  <div class="col-2"><b>Address:</b></div>
-                  <div class="col-10 mr-auto">
+                  <div class="col-sm-2 col-xs-12"><b>Address:</b></div>
+                  <div class="col-sm-10 col-sx-12 mr-auto">
                       <p class="m-0">${buyer.street}</p>
                       <p class="m-0">${buyer.city}, ${state} ${buyer.zip}</p>
                       <p class="m-0">${buyer.country}</p>
@@ -192,7 +195,7 @@ The Ocean Tigers Dive House Staff
                 <p class="m-0"><b>Phone:</b> +${buyer.phone}</p>
                 <br>
                 <p>Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at 
-                  <a href="mailto:oceantigersdivehouse@gmail.com?Subject=${tour.title}%20${orderNumber}" target="_top">Ocean Tigers Dive House</a>.
+                  <a href="mailto:oceantigersdivehouse@gmail.com?Subject=${tour.title}%20${orderNumber}" target="_top">oceantigers@gmail.com</a>.
                 </P>  
                 <p>We look forward to joining you in this incredible adventure on ${date}.</p>
                 
@@ -210,23 +213,19 @@ The Ocean Tigers Dive House Staff
             thankYou.innerHTML = thankYouModalMarkup
           }
         }
-        // Hide all modals
+        // Hide modals
         $('#checkoutModal').modal('hide')
         $('#contactModal').modal('hide') 
         // Show thank you modal
         $('#thankYouModal').modal('show')
-      });
+      })
     }
   }, '#paypal-button-container')
   
 // Query Selectors and getElements
 const cardsDiv = document.getElementById('tour-cards')
 const checkoutForm = document.querySelectorAll('.checkout')
-const contactForm = document.querySelector('.contact-form')
 const contactSubmit = document.getElementById('submit-contact-info')
-
-// function hideContactForm() { contactForm.style.display = 'none' }
-// function showContactForm() { contactForm.style.display = 'block' }
 
 // jQuery serializeArray() to target form and put the name: value fields to return data object
 function getFormInputInfo() {
@@ -243,22 +242,16 @@ function purchasedTourInfo() {
   const tourDescription = document.querySelector('#tour-description')
   const tourLocation = document.querySelector('#tour-location')
   const tourPrice = document.querySelector('#tour-price')
+  const tourDeposit = document.querySelector('#tour-deposit')
 
   return {
-    price: parseFloat(tourPrice.innerText),
+    price: parseFloat(tourPrice.innerText).toFixed(2),
+    deposit: parseFloat(tourDeposit.innerText).toFixed(2),
     description: tourDescription.innerText,
     title: tourTitle.innerText,
     location: tourLocation.innerText
   } 
 }
-
-// function showPackages() {
-//   cardsDiv.style.display = 'flex'
-//   cardsHeader.style.display = 'block'
-// }
-
-// function hideCheckout() { checkoutForm.forEach(el => el.style.display = 'none') }
-// function displayCheckout() { checkoutForm.forEach(el => el.style.display = 'block') }
 
 // Listen for Buy Now click event
 cardsDiv.addEventListener('click', openContactForm) 
@@ -266,8 +259,6 @@ cardsDiv.addEventListener('click', openContactForm)
 function openContactForm(e) {
   // Get chosen tour and pass it along to addTourToCheckout()
   const tour = getChosenTourInfo(e)
-  // hidePackages()
-  // showContactForm()
   addTourToCheckout(tour)
 }
 
@@ -277,25 +268,25 @@ function addTourToCheckout(tour) {
   const costCharged = document.querySelector('.cost-charged')
   if (tour) {
     const markup = `
-        <div class="">
-          <p class="h3 text-center">${tour.title}<p>
-          <div class="card mb-3 h-100" id="tourCards">
-            <img src="${tour.imageUrl}" data-value="${tour.imageUrl}" data-id="imageUrl" class="card-img-top tour" alt="${tour.title}">
-            <h5 class="card-header tour pl-4 pr-4 pt-2 pb-2 bg-warning border-dark" data-value="${tour.title}" data-id="title" id="tour-title">${tour.title}</h5>
-            <div class="card-body">
-              <p class="card-text tour" data-value="${tour.description}" data-id="description" id="tour-description">${tour.description}</p>
-              <p class="card-text tour" data-value="${tour.location}" data-id="location" id="tour-location">Location: ${tour.location}</p>
-              <p class="card-text">Price: $ <span class="tour" data-value="${parseFloat(tour.price).toFixed(2)}" data-id="price" id="tour-price">${parseFloat(tour.price).toFixed(2)}</span> USD</p>
-            </div>
+      <div class="mb-2">
+        <p class="h3 text-center">${tour.title}<p>
+        <div class="card mb-3 h-100" id="tourCards">
+          <img src="${tour.imageUrl}" data-value="${tour.imageUrl}" data-id="imageUrl" class="card-img-top tour" alt="${tour.title}">
+          <h5 class="card-header tour pl-4 pr-4 pt-2 pb-2 bg-warning border-dark" data-value="${tour.title}" data-id="title" id="tour-title">${tour.title}</h5>
+          <div class="card-body mb-3">
+            <p class="card-text tour" data-value="${tour.description}" data-id="description" id="tour-description">${tour.description}</p>
+            <p class="card-text tour" data-value="${tour.location}" data-id="location" id="tour-location">Location: ${tour.location}</p>
+            <p class="card-text m-0">Price: $ <span class="tour" data-value="${parseFloat(tour.price).toFixed(2)}" data-id="price" id="tour-price">${parseFloat(tour.price).toFixed(2)}</span> USD</p>
+            <p class="card-text m-0">Deposit: $ <span class="tour" data-value="${parseFloat(tour.deposit).toFixed(2)}" data-id="deposit" id="tour-deposit">${parseFloat(tour.deposit).toFixed(2)}</span> USD</p>
           </div>
         </div>
-        ` 
-          shoppingCart.forEach(el => el.innerHTML = markup)
+      </div>
+      `; 
+      shoppingCart.forEach(el => el.innerHTML = markup)
 
-  
     const markupCostCharged = `
-      <p>You will be charged:</P
-      <p class="font-weight-bold text-h4">$${parseFloat(tour.price).toFixed(2)} USD</p>
+      <p>You will be charged a deposit of:</P
+      <p class="font-weight-bold text-h4">$${parseFloat(tour.deposit).toFixed(2)} USD</p>
     `;
       costCharged.innerHTML = markupCostCharged      
   }
@@ -330,16 +321,47 @@ function addCustomerToCheckout() {
     <p class="m-0 mb-3"><span class="customer-phone">+${buyer.phone}</span></p><br>
     <h5>Tour Date: &nbsp;<span class="tour-date">${convertedDate}</span></h5>
   `;
-
   customer.innerHTML = markupTourCard
 }
 
-// Hide contact for and show the checkout with paypal buttons
+// Validate email while entering it and when the submit button is pressed
+const email = document.getElementById('email')
+const submitContactBtn = document.getElementById('submit-contact-info')
+  email.addEventListener('keyup', validateEmail)
+  submitContactBtn.addEventListener('click', validateEmail)
+
+function validateEmail() {
+  const emailHelp = document.getElementById('emailHelp')
+  const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+  
+  email.classList.remove('shake-horizontal')
+  
+  if (emailRegExp.test(email.value)) {
+    email.classList.remove('invalidEmail')
+    email.classList.remove('invalidEmail:focus')
+    emailHelp.style.display = 'none'
+    return true
+  } else {
+    email.classList.add('invalidEmail')
+    email.classList.add('invalidEmail:focus')
+    emailHelp.style.display = "block"
+    return false
+  }
+}
+
+function validateForm() {
+  if (validateEmail()) {
+    checkOut()
+  } else {
+    email.classList.add('shake-horizontal')
+  }
+}
+
+// Hide contact modal and show the checkout modal with paypal buttons
 function checkOut(){
+  addCustomerToCheckout()
   $('#checkoutModal').modal('toggle');
   $('#contactModal').modal('toggle');
-  addCustomerToCheckout()
-  // displayCheckout()
 }
 
 // Go back button closes the checkout modal and returns to the contact form
@@ -348,15 +370,15 @@ $('#goBackBtn').on('click', function() {
 })
 
 // Target continue to checkout button and prevent the default action
-$("#buyer-form").submit(function(e){ e.preventDefault(); });
+$("#buyer-form").submit(function(e){ e.preventDefault() });
 
 // Prevent customer from choosing past dates
-const dt = new Date();
-const yyyy = dt.getFullYear().toString();
-const mm = (dt.getMonth() + 1).toString(); // getMonth() is zero-based
-const dd  = dt.getDate().toString();
-const min = yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]); // padding
-$('#tour-date').prop('min', min);
+const dt = new Date()
+const yyyy = dt.getFullYear().toString()
+const mm = (dt.getMonth() + 1).toString() // getMonth() is zero-based
+const dd  = dt.getDate().toString()
+const min = yyyy + '-' + (mm[1] ? mm : "0" + mm[0]) + '-' + (dd[1] ? dd : "0" + dd[0]) // padding
+$('#tour-date').prop('min', min)
   
 // Add tour cards to the DOM based on the data from datoCMS
 function populateCards(packages) {
@@ -369,7 +391,8 @@ function populateCards(packages) {
           <div class="card-body">
             <p class="card-text tour" data-value="${p.description}" data-id="description" id="card-tour-description">${p.description}</p>
             <p class="card-text tour" data-value="${p.location}" data-id="location" id="card-tour-location">Location: ${p.location}</p>
-            <p class="card-text">Price: $<span class="tour tour-price" data-value="${parseFloat(p.price)}" data-id="price" id="card-tour-price">${parseFloat(p.price).toFixed(2)}</span> USD</p>
+            <p class="card-text m-0">Price: $<span class="tour tour-price" data-value="${parseFloat(p.price)}" data-id="price" id="card-tour-price">${parseFloat(p.price).toFixed(2)}</span> USD</p>
+            <p class="card-text m-0">Deposit: $<span class="tour tour-deposit" data-value="${parseFloat(p.price) / 5}" data-id="deposit" id="card-tour-deposit">${(parseFloat(p.price) / 5).toFixed(2)}</span> USD</p>
           </div>
           <div class="p-4">
               <a href="#" class="btn btn-warning purchase-tour border-dark" data-toggle="modal" data-target="#contactModal" id="purchase-tour">Buy Now</a>
@@ -377,15 +400,15 @@ function populateCards(packages) {
         </div>
       </div>
       `
-      cardsDiv.innerHTML += markup;
+      cardsDiv.innerHTML += markup
   })
 }
 
 // HTTP fecth call to database and retrieving all packages using graphql
 function getPackages() {
   // const token = 'DATO_CMS_TOKEN';
-    // Fetch packages from DatoCMS
-    fetch(
+  // Fetch packages from DatoCMS
+  fetch(
     'https://graphql.datocms.com/',
     {
       method: 'POST',
@@ -411,12 +434,10 @@ function getPackages() {
   )
   .then(res => res.json())
   .then((res) => {
-    const packages = res.data.allPackages;
+    const packages = res.data.allPackages
     populateCards(packages)
   })
-  .catch((error) => {
-    console.log(error);
-  });
+  .catch((error) => { console.log(error) })
 }
 
 // Converting numbered month to named month and returning format from yyyy-mm-dd to month dd, yyyy
@@ -443,11 +464,12 @@ function convertDate(date) {
   return `${month} ${day}, ${year}`
 }
 
-function init() {
-  getPackages()
-  // hideCheckout()
-  // hideContactForm()
-}
+function init() { 
+  getPackages() 
+  // $('#checkoutModal').modal('show')
+  // $('#contactModal').modal('show') 
+  // $('#thankYouModal').modal('show')
+} 
 init()
 
   

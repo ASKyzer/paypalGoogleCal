@@ -8,3 +8,46 @@
 .modal {
   overflow-y: auto !important;
 }
+
+.invalidEmail {
+  border: 1px solid red;
+}
+
+.invalidEmail:focus {
+  outline: none !important;
+  border: 1px solid red;
+  box-shadow: 0 0 10px rgb(206, 113, 126);
+}
+
+#emailHelp {
+  display: none;
+}
+
+.shake-horizontal {
+	animation: shake-horizontal 0.8s cubic-bezier(0.455, 0.030, 0.515, 0.955) both;
+}
+
+@keyframes shake-horizontal {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70% {
+    transform: translateX(-10px);
+  }
+  20%,
+  40%,
+  60% {
+    transform: translateX(10px);
+  }
+  80% {
+    transform: translateX(8px);
+  }
+  90% {
+    transform: translateX(-8px);
+  }
+}
+
