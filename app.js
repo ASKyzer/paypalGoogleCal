@@ -55,7 +55,6 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {
     
     console.log(data)
-    document.getElementById('orderNumber').innerText = data.orderID
     return actions.payment.execute()
       .then(function () {
         console.log('payment submitted')
@@ -225,12 +224,10 @@ paypal.Button.render({
 // }
 
 const buyerForm = document.getElementById('buyer-form')
-    console.log(buyerForm)
     $(buyerForm).submit(function(e) {
       e.preventDefault();
       checkOut()
       console.log('form targeted')
-      
     });
   
 // jQuery serializeArray() to target form and put the name: value fields to return data object
