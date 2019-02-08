@@ -58,6 +58,14 @@ paypal.Button.render({
       .then(function () {
         // Authorize owner's Google Calendar
         // handleAuth() 
+        $("#buyer-form").submit(function(e) {
+          e.preventDefault();
+          console.log('form targeted')
+          var $form = $(this);
+          $.post($form.attr("action"), $form.serialize()).then(function() {
+            alert("Thank you!");
+          });
+        });
         // Hide modals
         hideCheckoutModal()
         hideContactModal()
