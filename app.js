@@ -53,21 +53,24 @@ paypal.Button.render({
   },
   
   onAuthorize: function (data, actions) {
+    const buyerForm = document.getElementById('buyer-form')
+    console.log(buyerForm)
+    $(buyerForm).submit(function(e) {
+      e.preventDefault();
+      console.log('form targeted')
+      var $form = $(this);
+      $.post($form.attr("action"), $form.serialize()).then(function() {
+        alert("Thank you!");
+      });
+    });
     console.log(data)
-    document.getElementById('orderNumber').innerText = data.orderId
+    document.getElementById('orderNumber').innerText = data.orderID
     return actions.payment.execute()
       .then(function () {
         console.log('payment submitted')
         // Authorize owner's Google Calendar
         // handleAuth() 
-        $("#buyer-form").submit(function(e) {
-          e.preventDefault();
-          console.log('form targeted')
-          var $form = $(this);
-          $.post($form.attr("action"), $form.serialize()).then(function() {
-            alert("Thank you!");
-          });
-        });
+       
         // Hide modals
         hideCheckoutModal()
         hideContactModal()
