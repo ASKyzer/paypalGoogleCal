@@ -60,14 +60,14 @@ paypal.Button.render({
         console.log('payment submitted')
         // Authorize owner's Google Calendar
         // handleAuth() 
-        // $("#buyer-form").submit(function(e) {
-        //   e.preventDefault();
-        //   console.log('form targeted')
-        //   var $form = $(this);
-        //   $.post($form.attr("action"), $form.serialize()).then(function() {
-        //     alert("Thank you!");
-        //   });
-        // });
+        $("#buyer-form").submit(function(e) {
+          e.preventDefault();
+          console.log('form targeted')
+          var $form = $(this);
+          $.post($form.attr("action"), $form.serialize()).then(function() {
+            alert("Thank you!");
+          });
+        });
         // Hide modals
         hideCheckoutModal()
         hideContactModal()
@@ -79,14 +79,7 @@ paypal.Button.render({
 // const clientId = 'CLIENT_ID';
 // const apiKey = 'API_KEY';
 // const scopes = 'https://www.googleapis.com/auth/calendar';
-$("#buyer-form").submit(function(e) {
-  e.preventDefault();
-  console.log('form targeted')
-  var $form = $(this);
-  $.post($form.attr("action"), $form.serialize()).then(function() {
-    alert("Thank you!");
-  });
-});
+
 // Authorize owner's Google Calendar
 
 // function handleClientLoad() {
