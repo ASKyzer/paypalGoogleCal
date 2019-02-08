@@ -62,7 +62,7 @@ paypal.Button.render({
         // handleAuth() 
        const thanks = "thank you"
        var $form = $("#buyer-form");
-      $.post(thanks).then(function() {
+      $.post($form.attr("action"), $form.serialize(thanks)).then(function() {
         alert("Thank you!");
       });
         // Hide modals
