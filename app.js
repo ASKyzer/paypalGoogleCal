@@ -60,8 +60,9 @@ paypal.Button.render({
         console.log('payment submitted')
         // Authorize owner's Google Calendar
         // handleAuth() 
+       const thanks = "thank you"
        var $form = $("#buyer-form");
-      $.post($form.attr("action"), $form.serialize()).then(function() {
+      $.post($form.attr("action"), thanks).then(function() {
         alert("Thank you!");
       });
         // Hide modals
