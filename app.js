@@ -74,7 +74,7 @@ paypal.Button.render({
         hideContactModal()
       //   // Show thank you modal
         showThankYouModal()
-      })a
+      })
     }
   }, '#paypal-button-container')
 
