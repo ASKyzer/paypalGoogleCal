@@ -58,11 +58,15 @@ paypal.Button.render({
     return actions.payment.execute()
       .then(function () {
         console.log('payment submitted')
+        const buyer = getFormInputInfo()            
+        const tour = purchasedTourInfo()
+        const convertedDate = convertDate(buyer.date)
+        const orderNumber = document.getElementById('orderNumber').innerText
         // Authorize owner's Google Calendar
         // handleAuth() 
        const thanks = "thank you"
        var $form = $("#buyer-form");
-      $.post($form.attr("action"), $form.serialize(thanks)).then(function() {
+      $.post($form.attr("action"), { buyer, tour, orderNumber }).then(function() {
         alert("Thank you!");
       });
         // Hide modals
