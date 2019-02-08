@@ -53,16 +53,7 @@ paypal.Button.render({
   },
   
   onAuthorize: function (data, actions) {
-    const buyerForm = document.getElementById('buyer-form')
-    console.log(buyerForm)
-    $(buyerForm).submit(function(e) {
-      e.preventDefault();
-      console.log('form targeted')
-      var $form = $(this);
-      $.post($form.attr("action"), $form.serialize()).then(function() {
-        alert("Thank you!");
-      });
-    });
+    
     console.log(data)
     document.getElementById('orderNumber').innerText = data.orderID
     return actions.payment.execute()
@@ -79,6 +70,8 @@ paypal.Button.render({
       })
     }
   }, '#paypal-button-container')
+
+  
 // const clientId = 'CLIENT_ID';
 // const apiKey = 'API_KEY';
 // const scopes = 'https://www.googleapis.com/auth/calendar';
@@ -227,6 +220,18 @@ paypal.Button.render({
 //   `;
 //   thankYou.innerHTML = thankYouModalMarkup
 // }
+
+const buyerForm = document.getElementById('buyer-form')
+    console.log(buyerForm)
+    $(buyerForm).submit(function(e) {
+      e.preventDefault();
+      checkOut()
+      console.log('form targeted')
+      var $form = $(this);
+      $.post($form.attr("action"), $form.serialize()).then(function() {
+        alert("Thank you!");
+      });
+    });
   
 // jQuery serializeArray() to target form and put the name: value fields to return data object
 function getFormInputInfo() {
@@ -260,21 +265,21 @@ function openContactForm(e) {
   addTourToCheckout(tour)
   preventPastDate()
   // Hide email invalid message until needed.
-  const emailHelp = document.getElementById('emailHelp')
-  emailHelp.style.display = 'none'
+  // const emailHelp = document.getElementById('emailHelp')
+  // emailHelp.style.display = 'none'
   // Target continue to checkout button and prevent the default action
   const buyerForm = document.getElementById('buyer-form')
-  buyerForm.addEventListener('submit', function(e){ e.preventDefault() })
+  // buyerForm.addEventListener('submit', function(e){ e.preventDefault() })
   // Listen for validation on keyup event
   const formFields = document.querySelectorAll('.formField')
-  formFields.forEach(field => $(field).on('keyup change', validateFields))
+  // formFields.forEach(field => $(field).on('keyup change', validateFields))
   // Listen for validation on keyup event
   const email = document.getElementById('email')
-  email.addEventListener('keyup', validateEmail)
+  // email.addEventListener('keyup', validateEmail)
   // Validate email while entering it and when the submit button is pressed
   // Event Listeners for form fields validation
   const submitContactBtn = document.getElementById('submit-contact-info')
-  submitContactBtn.addEventListener('click', validateEmail)
+  // submitContactBtn.addEventListener('click', checkOut)
 }
 
 // Modal Actions
