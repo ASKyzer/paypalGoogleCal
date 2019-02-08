@@ -30,7 +30,7 @@
             </div>
             <div class="modal-body">
               <div class="p-3 contact-form">
-                <form class="mb-5"  id="buyer-form" onsubmit="validateForm(); false">
+                <form name="buyer" method="POST" data-netlify="true" class="mb-5"  id="buyer-form" onsubmit="validateForm(); false">
                   <div class="form-row">
                     <div class="form-group col-md-6">
                       <label for="first-name">First Name</label>
@@ -129,6 +129,7 @@
           <div class="modal-body" id="thank-you">
             <p class="pl-5 pr-5 text-center">Thank you for choosing your adventures with Ocean Tigers Dive House.</p>
             <div class="logo d-flex justify-content-center">
+              <div id="orderNumber"></div>
               <img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="text-center img img-responsive img-fluid logo" alt="OTDH Logo" />
             </div>
           </div>
