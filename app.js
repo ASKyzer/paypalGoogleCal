@@ -66,15 +66,15 @@ paypal.Button.render({
         // handleAuth() 
        const thanks = "thank you"
        var $form = $("#buyer-form");
-      $.post($form.attr("action"), { buyer, tour, orderNumber }).then(function() {
-        alert("Thank you!");
+      $.post("process.php", { buyer, tour, orderNumber }).then(function(data) {
+        alert("Thank you!" + data);
       });
         // Hide modals
         hideCheckoutModal()
         hideContactModal()
       //   // Show thank you modal
         showThankYouModal()
-      })
+      })a
     }
   }, '#paypal-button-container')
 
