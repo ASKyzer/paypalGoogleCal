@@ -55,19 +55,28 @@ paypal.Button.render({
   onAuthorize: function (data, actions) {
     
     console.log(data)
+    const buyer = getFormInputInfo()            
+    const tour = purchasedTourInfo()
+    const convertedDate = convertDate(buyer.date)
+    const orderNumber = data.orderID
+    const description = document.getElementById('description')
+    const tourInfo = `
+      Order Number: ${orderNumber}
+      Date: ${convertedDate}
+      Name: ${tour.title}
+      Location: ${tour.location}
+      Price: ${tour.price}
+      Deposit: ${tour.deposit}
+    `;
+
+    description.innerHTML = tourInfo
+
     return actions.payment.execute()
       .then(function () {
-        console.log('payment submitted')
-        const buyer = getFormInputInfo()            
-        const tour = purchasedTourInfo()
-        const convertedDate = convertDate(buyer.date)
-        const orderNumber = document.getElementById('orderNumber').innerText
-        // Authorize owner's Google Calendar
-        // handleAuth() 
-       const thanks = "thank you"
+        console.log(description)
        var $form = $("#buyer-form");
-      $.post("process.php", { buyer, tour, orderNumber }).then(function(data) {
-        alert("Thank you!" + data);
+      $.post($form.attr("action"), $form.serialize()).then(function() {
+        alert("Thank you!");
       });
         // Hide modals
         hideCheckoutModal()
