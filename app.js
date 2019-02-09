@@ -36,8 +36,7 @@ paypal.Button.render({
   },
   
   payment: function (data, actions) {
-    const deposit = document.querySelector('#tour-deposit').innerText    
-    
+    const deposit = document.querySelector('#tour-deposit').innerText  
     return actions.payment.create({
       payment: {
         transactions: [
@@ -53,13 +52,12 @@ paypal.Button.render({
   },
   
   onAuthorize: function (data, actions) {
-    
-    console.log(data)
+
     const buyer = getFormInputInfo()            
     const tour = purchasedTourInfo()
     const convertedDate = convertDate(buyer.date)
     const orderNumber = data.orderID
-    const description = document.getElementById('description')
+    const description = document.getElementById('tour-details')
     const tourInfo = `
       Order Number: ${orderNumber}
       Date: ${convertedDate}
@@ -69,12 +67,14 @@ paypal.Button.render({
       Deposit: ${tour.deposit}
     `;
 
-    description.innerHTML = tourInfo
-
+    description.value = tourInfo  
+    
+      
     return actions.payment.execute()
       .then(function () {
-        console.log(description)
        var $form = $("#buyer-form");
+       console.log($form.serialize())
+
       $.post($form.attr("action"), $form.serialize()).then(function() {
         alert("Thank you!");
       });
@@ -237,14 +237,10 @@ paypal.Button.render({
 //   thankYou.innerHTML = thankYouModalMarkup
 // }
 
-const buyerForm = document.getElementById('buyer-form')
-    $(buyerForm).submit(function(e) {
-      e.preventDefault();
-      checkOut()
-      console.log('form targeted')
-    });
+
   
 // jQuery serializeArray() to target form and put the name: value fields to return data object
+
 function getFormInputInfo() {
   const myForm = $("form").serializeArray()
   const formData = {}
@@ -275,11 +271,18 @@ function openContactForm(e) {
   const tour = getChosenTourInfo(e)
   addTourToCheckout(tour)
   preventPastDate()
+
+  const buyerForm = document.getElementById('buyer-form')
+    $(buyerForm).submit(function(e) {
+      e.preventDefault();
+      checkOut()
+      console.log('form targeted')
+    });
   // Hide email invalid message until needed.
   // const emailHelp = document.getElementById('emailHelp')
   // emailHelp.style.display = 'none'
   // Target continue to checkout button and prevent the default action
-  const buyerForm = document.getElementById('buyer-form')
+  // const buyerForm = document.getElementById('buyer-form')
   // buyerForm.addEventListener('submit', function(e){ e.preventDefault() })
   // Listen for validation on keyup event
   const formFields = document.querySelectorAll('.formField')
@@ -301,6 +304,7 @@ function toggleCheckoutModal() { $('#checkoutModal').modal('toggle') }
 function hideCheckoutModal() { $('#checkoutModal').modal('hide') }
 function showCheckoutModal() { $('#checkoutModal').modal('show') }
 function showThankYouModal() { $('#thankYouModal').modal('show') }
+
 
 // with chosen tour, display it on the contact form and checkout form
 function addTourToCheckout(tour) {
