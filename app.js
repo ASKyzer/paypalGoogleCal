@@ -86,118 +86,7 @@ paypal.Button.render({
     }
   }, '#paypal-button-container')
 
-  
-// const clientId = 'CLIENT_ID';
-// const apiKey = 'API_KEY';
-// const scopes = 'https://www.googleapis.com/auth/calendar';
-
-// Authorize owner's Google Calendar
-
-// function handleClientLoad() {
-//   gapi.client.setApiKey(apiKey);
-//   window.setTimeout(checkAuth,1);
-//   checkAuth();
-// }
-  
-// function checkAuth() {
-//   gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true},
-//       handleAuthResult);
-// }
-
-// function handleAuthResult(authResult) {
-//   if (authResult) {
-//     createCalendarEvent();
-//   } else {
-//     alert('Event not generated')
-//   }
-// }
-
-// function handleAuth() {
-//   gapi.auth.authorize(
-//       {client_id: clientId, scope: scopes, immediate: false},
-//       handleAuthResult);
-//   return false;
-// }
-
-// function createCalendarEvent() {
-//   gapi.client.load('calendar', 'v3', function() {
-//     const buyer = getFormInputInfo()            
-//     const tour = purchasedTourInfo()
-//     const convertedDate = convertDate(buyer.date)
-//     const orderNumber = document.getElementById('orderNumber').innerText
-    
-//     writeThankYouNote(buyer, tour, convertedDate, orderNumber)
-  
-// // Email markup for letter to send with Google calendar invite to buyer
-// const emailMarkup = `
-// Dear ${buyer.firstName} ${buyer.lastName},
-
-// Thank you for choosing to book your adventures with Ocean Tigers Dive House.
-
-// <b style="font-size: 44px;">Tour Information:</b> 
-// <b>Tour:</b> ${tour.title}
-// <b>Summary:</b> ${tour.description}
-// <b>Tour Date:</b> ${convertedDate}
-// <b>Tour Price: $</b> ${tour.price} USD
-// <b>Tour Deposit: $</b> ${tour.deposit} USD
-
-// <b>Order No.:</b> ${orderNumber}
-
-// <b>Your Information:</b>
-// <b>Name:</b> ${buyer.firstName} ${buyer.lastName}
-// <b>Email:</b> ${buyer.email}
-// <b>Phone:</b> +${buyer.phone}
-
-// Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at oceantigersdivehouse@gmail.com.  
-
-// We look forward to joining you in this incredible adventure.
-
-// Sincerely,
-
-// The Ocean Tigers Dive House Staff
-
-
-// `;
-            
-//     const event = {
-//       // 'id': eventID, // Will be automaticall generated
-//       'summary': `${tour.title}, ${orderNumber}`,
-//       'location': tour.location,
-//       'description': emailMarkup,
-//       'start': {
-//         'date': buyer.date,
-//         'timeZone': 'America/Los_Angeles'
-//       },
-//       'end': {
-//         'date': buyer.date,
-//         'timeZone': 'America/Los_Angeles'
-//       },
-//       'attendees': [
-//         {'email': buyer.email}
-//       ]
-//     };
-    
-//     const request = gapi.client.calendar.events.insert({
-//       'calendarId': 'primary',
-//       'sendNotifications': true,
-//       'sendUpdates': 'all',
-//       'resource': event
-//     })
-    
-//     request.execute(function(event) {
-//       console.log(event)
-//     })
-//   })
-//   // Hide modals
-//   hideCheckoutModal()
-//   hideContactModal()
-//   // Show thank you modal
-//   showThankYouModal()
-// }
-
 function writeThankYouNote(buyer, tour, date, orderNumber) {
-  console.log(buyer, tour)
-  console.log("writing thank you note")
   const thankYou = document.querySelector('#thank-you')
   const thankYouModalMarkup = `
     <div class="p-3">
@@ -236,8 +125,6 @@ function writeThankYouNote(buyer, tour, date, orderNumber) {
   thankYou.innerHTML = thankYouModalMarkup
 }
 
-
-  
 // jQuery serializeArray() to target form and put the name: value fields to return data object
 function getFormInputInfo() {
   const myForm = $("form").serializeArray()
@@ -276,22 +163,6 @@ function openContactForm(e) {
       checkOut()
       console.log('form targeted')
     });
-  // Hide email invalid message until needed.
-  // const emailHelp = document.getElementById('emailHelp')
-  // emailHelp.style.display = 'none'
-  // Target continue to checkout button and prevent the default action
-  // const buyerForm = document.getElementById('buyer-form')
-  // buyerForm.addEventListener('submit', function(e){ e.preventDefault() })
-  // Listen for validation on keyup event
-  const formFields = document.querySelectorAll('.formField')
-  // formFields.forEach(field => $(field).on('keyup change', validateFields))
-  // Listen for validation on keyup event
-  const email = document.getElementById('email')
-  // email.addEventListener('keyup', validateEmail)
-  // Validate email while entering it and when the submit button is pressed
-  // Event Listeners for form fields validation
-  const submitContactBtn = document.getElementById('submit-contact-info')
-  // submitContactBtn.addEventListener('click', checkOut)
 }
 
 // Modal Actions
@@ -359,38 +230,6 @@ function addCustomerToCheckout() {
     <h5>Tour Date: &nbsp;<span class="tour-date">${convertedDate}</span></h5>
   `;
   customer.innerHTML = markupTourCard
-}
-
-function validateEmail() {
-  const email = document.getElementById('email')
-  const emailHelp = document.getElementById('emailHelp')
-  const emailRegExp = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
-  
-  if (emailRegExp.test(email.value)) {
-    email.classList.remove('invalid')
-    emailHelp.style.display = 'none'
-    return true
-  } else {
-    email.classList.add('invalid')
-    emailHelp.style.display = "block"
-    return false
-  }
-}
-
-function validateFields() {
-  const formFields = document.querySelectorAll('.formField')
-  formFields.forEach(field => {
-    field.classList.add('invalid')
-    if (field.value !== '' ) {
-      field.classList.remove('invalid')
-    }
-  })
-}
-
-function validateForm() {
-  if(validateEmail()){
-    checkOut()
-  }
 }
 
 // Hide contact modal and show the checkout modal with paypal buttons
