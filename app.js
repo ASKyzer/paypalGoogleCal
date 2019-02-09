@@ -58,13 +58,12 @@ paypal.Button.render({
     const convertedDate = convertDate(buyer.date)
     const orderNumber = data.orderID
     const description = document.getElementById('tour-details')
-    const tourInfo = `
-      Order Number: ${orderNumber}
-      Date: ${convertedDate}
-      Name: ${tour.title}
-      Location: ${tour.location}
-      Price: ${tour.price}
-      Deposit: ${tour.deposit}
+    const tourInfo = `Order Number: ${orderNumber}<br>
+                      Date: ${convertedDate}<br>
+                      Name: ${tour.title}<br>
+                      Location: ${tour.location}<br>
+                      Price: ${tour.price}<br>
+                      Deposit: ${tour.deposit}
     `;
 
     description.value = tourInfo  
