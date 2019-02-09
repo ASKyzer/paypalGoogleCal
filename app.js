@@ -55,33 +55,33 @@ paypal.Button.render({
 
     const buyer = getFormInputInfo()            
     const tour = purchasedTourInfo()
-    const convertedDate = convertDate(buyer.date)
+    const date = convertDate(buyer.date)
     const orderNumber = data.orderID
     const description = document.getElementById('tour-details')
-    const tourInfo = `Order Number: ${orderNumber}<br>
-                      Date: ${convertedDate}<br>
-                      Name: ${tour.title}<br>
-                      Location: ${tour.location}<br>
-                      Price: ${tour.price}<br>
-                      Deposit: ${tour.deposit}
+    const tourInfo = `
+      Order Number: ${orderNumber}
+      Date: ${date}
+      Name: ${tour.title}
+      ${tour.location}
+      Price: ${tour.price}
+      Deposit: ${tour.deposit}
     `;
 
     description.value = tourInfo  
-    
-      
+   
+    writeThankYouNote(buyer, tour, date, orderNumber)
+
     return actions.payment.execute()
       .then(function () {
-       var $form = $("#buyer-form");
-       console.log($form.serialize())
-
-      $.post($form.attr("action"), $form.serialize()).then(function() {
-        alert("Thank you!");
-      });
-        // Hide modals
-        hideCheckoutModal()
-        hideContactModal()
-      //   // Show thank you modal
-        showThankYouModal()
+        const $form = $("#buyer-form");
+        $.post($form.attr("action"), $form.serialize()).then(function() {
+          alert("Thank you!");
+        });
+          // Hide modals
+          hideCheckoutModal()
+          hideContactModal()
+        //   // Show thank you modal
+          showThankYouModal()
       })
     }
   }, '#paypal-button-container')
@@ -195,51 +195,50 @@ paypal.Button.render({
 //   showThankYouModal()
 // }
 
-// function writeThankYouNote(buyer, tour, date, orderNumber) {
-//   console.log(buyer, tour)
-//   console.log("writing thank you note")
-//   const thankYou = document.querySelector('#thank-you')
-//   const thankYouModalMarkup = `
-//     <div class="p-3">
-//       <p>Dear ${buyer.firstName} ${buyer.lastName},</p>
-//       <p>Thank you for choosing to book your adventures with Ocean Tigers Dive House.</p>
-//       <p>An email has been sent to you with a Google Calendar invite to this event.<p>
+function writeThankYouNote(buyer, tour, date, orderNumber) {
+  console.log(buyer, tour)
+  console.log("writing thank you note")
+  const thankYou = document.querySelector('#thank-you')
+  const thankYouModalMarkup = `
+    <div class="p-3">
+      <p>Dear ${buyer.firstName} ${buyer.lastName},</p>
+      <p>Thank you for choosing to book your adventures with Ocean Tigers Dive House.</p>
+      <p>Please check to see if your email is correct. We will send you an email to confirm your booking.<p>
 
-//       <p class="m-0"><b >Tour Information:</b></p>
-//       <p class="m-0"><b>Tour:</b> ${tour.title}</p>
-//       <p class="m-0"><b>Tour Date:</b> ${date}</p>
-//       <p class="m-0"><b>Tour Price: $</b> ${tour.price} USD</p>
-//       <p class="m-0"><b>Deopsit: $</b> ${tour.deposit} USD</p>
-//       <p class="m-0"><b>Order No.:</b> ${orderNumber}</p>
-//       <br>
-//       <p class="m-0"><b>Your Information:</b></p>
-//       <p class="m-0"><b>Name:</b> ${buyer.firstName} ${buyer.lastName}</p>        
-//       <p class="m-0"><b>Email:</b> ${buyer.email}</p>
-//       <p class="m-0"><b>Phone:</b> +${buyer.phone}</p>
-//       <br>
-//       <p>Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at 
-//         <a href="mailto:oceantigersdivehouse@gmail.com?Subject=${tour.title}%20${orderNumber}" target="_top">oceantigers@gmail.com</a>.
-//       </P>  
-//       <p>We look forward to joining you in this incredible adventure on ${date}.</p>
+      <p class="m-0"><b >Tour Information:</b></p>
+      <p class="m-0"><b>Tour:</b> ${tour.title}</p>
+      <p class="m-0"><b>Tour Date:</b> ${date}</p>
+      <p class="m-0"><b>Tour Price: $</b> ${tour.price} USD</p>
+      <p class="m-0"><b>Deposit: $</b> ${tour.deposit} USD</p>
+      <p class="m-0"><b>Order No.:</b> ${orderNumber}</p>
+      <br>
+      <p class="m-0"><b>Your Information:</b></p>
+      <p class="m-0"><b>Name:</b> ${buyer.firstName} ${buyer.lastName}</p>        
+      <p class="m-0"><b>Email:</b> ${buyer.email}</p>
+      <p class="m-0"><b>Phone:</b> +${buyer.phone}</p>
+      <br>
+      <p>Please review the information above and if anything is incorrect, or if you have any additional questions, please email us at 
+        <a href="mailto:oceantigersdivehouse@gmail.com?Subject=${tour.title}%20${orderNumber}" target="_top">oceantigers@gmail.com</a>.
+      </P>  
+      <p>We look forward to joining you in this incredible adventure on ${date}.</p>
       
-//       <div class="row align-items-center">
-//         <div class="col-8">
-//           <p>Sincerely,</p>
-//           <p>The Ocean Tigers Dive House Staff</p>
-//         </div>
-//         <div class="col-4">
-//           <img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="img img-responsive img-fluid" alt="OTDH Logo" />
-//         </div>
-//       </div>
-//     </div>
-//   `;
-//   thankYou.innerHTML = thankYouModalMarkup
-// }
+      <div class="row align-items-center">
+        <div class="col-8">
+          <p>Sincerely,</p>
+          <p>The Ocean Tigers Dive House Staff</p>
+        </div>
+        <div class="col-4">
+          <img src="https://www.datocms-assets.com/9161/1549031775-logo-transparent-fish.png" class="img img-responsive img-fluid" alt="OTDH Logo" />
+        </div>
+      </div>
+    </div>
+  `;
+  thankYou.innerHTML = thankYouModalMarkup
+}
 
 
   
 // jQuery serializeArray() to target form and put the name: value fields to return data object
-
 function getFormInputInfo() {
   const myForm = $("form").serializeArray()
   const formData = {}
