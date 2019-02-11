@@ -52,13 +52,17 @@ paypal.Button.render({
   },
   
   onAuthorize: function (data, actions) {
-
-    const buyer = getFormInputInfo()            
-    const tour = purchasedTourInfo()
-    const date = convertDate(buyer.date)
+    // Order ID from PayPal payment so we can keep track of this particular purchase.
     const orderNumber = data.orderID
-    const description = document.getElementById('tour-details')
-    const tourInfo = `
+    // Get buyer and tour info
+    const buyer = getFormInputInfo("#buyer-form")            
+    const tour = purchasedTourInfo()
+    // Convert numbered month to worded month and from yyyy-mm-dd format to month dd, yyyy format
+    const date = convertDate(buyer.date)
+
+    // Since Netlify only sends the serialized input values, I created a hidden tour-details input field and set it's value to the details of the purchaseed tour including the order number so it can be sent along with the buyer contact info to OTDH.
+    const description = document.querySelector('#tour-details')
+    const tourDetails = `
       Order Number: ${orderNumber}
       Date: ${date}
       Name: ${tour.title}
@@ -67,7 +71,7 @@ paypal.Button.render({
       Deposit: ${tour.deposit}
     `;
 
-    description.value = tourInfo  
+    description.value = tourDetails  
    
     writeThankYouNote(buyer, tour, date, orderNumber)
 
@@ -80,7 +84,7 @@ paypal.Button.render({
           // Hide modals
           hideCheckoutModal()
           hideContactModal()
-        //   // Show thank you modal
+          // Show thank you modal
           showThankYouModal()
       })
     }
@@ -126,8 +130,8 @@ function writeThankYouNote(buyer, tour, date, orderNumber) {
 }
 
 // jQuery serializeArray() to target form and put the name: value fields to return data object
-function getFormInputInfo() {
-  const myForm = $("form").serializeArray()
+function getFormInputInfo(formID) {
+  const myForm = $(formID).serializeArray()
   const formData = {}
     $.each(myForm, function(i, field)
       { formData[field.name] = field.value })
@@ -156,13 +160,24 @@ function openContactForm(e) {
   const tour = getChosenTourInfo(e)
   addTourToCheckout(tour)
   preventPastDate()
+  // Event Listener to submit form
+  const buyerForm = document.querySelector('#buyer-form')
+  buyerForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    checkOut()
+  });
+  // Listen for Clear Form click
+  const clearBuyerFormBtn = document.querySelector('#clear-buyer-form')
+  clearBuyerFormBtn.addEventListener('click', function() {
+    clearForm('#buyer-form')
+  })
+}
 
-  const buyerForm = document.getElementById('buyer-form')
-    $(buyerForm).submit(function(e) {
-      e.preventDefault();
-      checkOut()
-      console.log('form targeted')
-    });
+function clearForm(formID) {
+  const myForm = document.querySelector(formID)
+  let inputs = myForm.elements;
+  inputs = Array.from(inputs)
+  inputs.forEach(i => i.value = '')
 }
 
 // Modal Actions
@@ -174,11 +189,10 @@ function hideCheckoutModal() { $('#checkoutModal').modal('hide') }
 function showCheckoutModal() { $('#checkoutModal').modal('show') }
 function showThankYouModal() { $('#thankYouModal').modal('show') }
 
-
 // with chosen tour, display it on the contact form and checkout form
 function addTourToCheckout(tour) {
   const shoppingCart = document.querySelectorAll('.shopping-cart')
-  const costCharged = document.querySelector('.cost-charged')
+  const depositCharged = document.querySelector('.cost-charged')
   if (tour) {
     const markup = `
       <div class="mb-2">
@@ -197,19 +211,20 @@ function addTourToCheckout(tour) {
       `; 
       shoppingCart.forEach(el => el.innerHTML = markup)
 
-    const markupCostCharged = `
+    const markupDepositCharged = `
       <p>You will be charged a deposit of:</P
       <p class="font-weight-bold text-h4">$${parseFloat(tour.deposit).toFixed(2)} USD</p>
     `;
-      costCharged.innerHTML = markupCostCharged      
+      depositCharged.innerHTML = markupDepositCharged      
   }
 }
 
 function getChosenTourInfo(e) {
-  // Target card and see if there's a buy now button and then target the classes for their values???
-  if(e.target.classList.contains('purchase-tour')) {
-    const data = (event.target).closest('#tourCards').querySelectorAll('.tour')
-    let chosenTour = {}
+  // Michael, can you show me what you would do here with using destructuring?  I read you code review notes and am still confused about what to do.
+  const chosenTour = {}
+
+  if(e.target.id === 'purchase-tour') {
+    const data = (e.target).closest('#tourCards').querySelectorAll('.tour')
     data.forEach(el => chosenTour[el.dataset.id] = el.dataset.value)
     return chosenTour
   }
@@ -219,15 +234,15 @@ function getChosenTourInfo(e) {
 // Retrieve Customer info form the contact cards and display in the checkout form
 function addCustomerToCheckout() {
   const customer = document.querySelector('.customer-info')
-  const buyer = getFormInputInfo()
-  const convertedDate = convertDate(buyer.date)
+  const buyer = getFormInputInfo("#buyer-form")
+  const date = convertDate(buyer.date)
   
   const markupTourCard = `
     <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
     <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
     <p class="m-0 mt-1"><span class="customer-email">${buyer.email}</span></p>
     <p class="m-0 mb-3"><span class="customer-phone">+${buyer.phone}</span></p><br>
-    <h5>Tour Date: &nbsp;<span class="tour-date">${convertedDate}</span></h5>
+    <h5>Tour Date: &nbsp;<span class="tour-date">${date}</span></h5>
   `;
   customer.innerHTML = markupTourCard
 }
@@ -235,10 +250,10 @@ function addCustomerToCheckout() {
 // Hide contact modal and show the checkout modal with paypal buttons
 function checkOut(){
   addCustomerToCheckout()
-  $('#checkoutModal').modal('toggle')
+  toggleCheckoutModal()
   toggleContactModal()
   // Go back button closes the checkout modal and returns to the contact form
-  const goBackBtn = document.getElementById('goBackBtn')
+  const goBackBtn = document.querySelector('#goBackBtn')
   goBackBtn.addEventListener('click', toggleContactModal)
 }
 
@@ -254,7 +269,7 @@ function preventPastDate() {
 
 // Add tour cards to the DOM based on the data from datoCMS
 function populateCards(packages) {
-  const cardsDiv = document.getElementById('tour-cards')
+  const cardsDiv = document.querySelector('#tour-cards')
   packages.forEach(p => {
     const markup = `
       <div class="col-lg-4 col-md-6 mt-3">
@@ -268,7 +283,7 @@ function populateCards(packages) {
             <p class="card-text m-0">Deposit: $<span class="tour tour-deposit" data-value="${parseFloat(p.price) / 5}" data-id="deposit" id="card-tour-deposit">${(parseFloat(p.price) / 5).toFixed(2)}</span> USD</p>
           </div>
           <div class="p-4">
-              <a href="#" class="btn btn-warning purchase-tour border-dark" data-toggle="modal" data-target="#contactModal" id="purchase-tour">Buy Now</a>
+              <a href="#" class="btn btn-warning border-dark" data-toggle="modal" data-target="#contactModal" id="purchase-tour">Buy Now</a>
           </div>
         </div>
       </div>
@@ -277,10 +292,8 @@ function populateCards(packages) {
   })
 }
 
-// HTTP fecth call to database and retrieving all packages using graphql
-function getPackages() {
-  const token = '60ce28d9190500bbe827ebb7766ffa';
-  // const token = 'DATO_CMS_TOKEN';
+// HTTP fecth call to database and retrieving all packages using graphQL
+function getPackages(token) {
   // Fetch packages from DatoCMS
   fetch(
     'https://graphql.datocms.com/',
@@ -339,15 +352,12 @@ function convertDate(date) {
 }
 
 function init() { 
-  getPackages() 
-
-  // Listen for Buy Now click event
-  const cardsDiv = document.getElementById('tour-cards')
+  const token = '60ce28d9190500bbe827ebb7766ffa';
+  // const token = 'DATO_CMS_TOKEN';
+  getPackages(token) 
+  // Listen for Buy Now click event.
+  const cardsDiv = document.querySelector('#tour-cards')
   cardsDiv.addEventListener('click', openContactForm) 
-
-  // $('#checkoutModal').modal('show')
-  // $('#contactModal').modal('show') 
-  // $('#thankYouModal').modal('show')
 } 
 init()
 
