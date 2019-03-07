@@ -3,6 +3,7 @@ let packagesData
 const modalContent = document.querySelector('#otdhModalContent')
 const modalTitle = document.querySelector('#checkoutModalTitle')
 const shoppingCart = document.querySelector('#shopping-cart')
+const paypalPayment = document.querySelector('#paypalCheckout')
 
 paypal.Button.render({
   env: 'sandbox', // sandbox | production
@@ -80,7 +81,7 @@ paypal.Button.render({
 function writeThankYouNote(buyer, tour, date, orderNumber) {
   shoppingCart.style.display = 'none'
   modalTitle.innerText = 'Success! Thank You!'
-  togglePaypal()
+  paypalPayment.style.display = 'none'
 
   const thankYouModalMarkup = `
     <div class="p-3">
@@ -245,17 +246,8 @@ function checkOut(modalContent){
   const buyerForm = document.querySelector('#buyer-form')
   buyerForm.style.display= 'none'
   modalTitle.innerText = 'Checkout'
+  paypalPayment.style.display = 'block'
   addCustomerToCheckout(modalContent)
-  togglePaypal()
-}
-
-function togglePaypal() {
-  const paypalPayment = document.querySelector('#paypalCheckout')
-  if (paypalPayment.style.display === 'none') {
-    paypalPayment.style.display = 'block'
-  } else {
-    paypalPayment.style.display = 'none'
-  }
 }
 
 function preventPastDate() {
@@ -356,7 +348,6 @@ function convertDate(date) {
 function init() {
   const token = '60ce28d9190500bbe827ebb7766ffa'
   const cardsContainer = document.querySelector('#tour-cards')
-  const paypalPayment = document.querySelector('#paypalCheckout')
   getPackages(token, cardsContainer)
   cardsContainer.addEventListener('click', openContactForm)
   $('#otdhModal').modal('hide');
