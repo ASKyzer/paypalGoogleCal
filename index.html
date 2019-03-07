@@ -21,18 +21,56 @@
 
     <div class="modal fade contat-form" id="otdhModal" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true">
       <div class="modal-dialog" role="document">
-        
         <div class="modal-content contact-form">
             <div class="modal-header bg-warning contact border-dark">
-                <h4 class="modal-title" id="checkoutModalTitle">Please enter your contact information</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                  <span aria-hidden="true">&times;</span>
-                </button>
-              </div>
+              <h4 class="modal-title" id="checkoutModalTitle">
+                <!-- Modal Title Goes Here -->
+              </h4>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
           <div id="otdhModalContent">
             <!-- Dynamic modal content -->  
           </div> 
-          <div class="checkout" class="tour-item" id='paypalCheckout'>
+          <form name="buyer" method="POST" subject="Tour/Course Purchase" data-netlify="true" class="mb-3 p-3"  id="buyer-form">
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="first-name">First Name</label>
+                <input type="text" name="firstName" class="form-control invalid formField" id="first-name" placeholder="First Name" required="required" />
+              </div>
+              <div class="form-group col-md-6">
+                <label for="last-name">Last Name</label>
+                <input type="text" name="lastName" class="form-control invalid formField" id="last-name" placeholder="Last name" required="required"  />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group col-md-6">
+                <label for="email">Email Address</label>
+                <input type="email" name="email" required="required"   class="form-control invalid" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+                <small id="emailHelp" class="form-text text-danger text-danger">Please enter a valid email address</small>
+              </div>
+              <div class="form-group col-md-6">
+                <label for="phone">Phone</label>
+                <input type="number" name="phone" required="required"   class="form-control invalid formField" id="phone" placeholder="Phone">
+                <small id="phoneHelp" class="form-text text-muted">Please include your contry code.</small>
+              </div>
+            </div>
+            <div class="form-group row mt-3 mb-3 d-flex align-items-center">
+              <label for="tour-date" class="col-md-6 col-form-label d-flex justify-content-end">Please choose a day you'd like to book this tour.</label>
+              <div class="col-md-6 d-flex justify-content-start">
+                <input class="date-picker form-control invalid formField" required="required"  type="date" name="date"  value="" id="tour-date">
+              </div>
+            </div>
+            <p class="hidden">
+              <input class="hidden" type="hidden" name='descriptions' id='tour-details' />
+            </p>
+            <div class="d-flex justify-content-between mt-4">
+              <button class="btn btn-warning border-dark ml-1 mr-1" id="clear-buyer-form">Clear Form</button>
+              <button class="btn btn-warning border-dark" id="submit-contact-info"  data-target="#contactModal" type="submit">Continue to Checkout</button>    
+            </div>
+          </form>
+          <div class="checkout pl-3 pr-3" class="tour-item" id='paypalCheckout'>
             <div class="row">
               <div class="col-12 customer-info">
               <!-- Customer info goes here at checkout -->
@@ -46,31 +84,27 @@
                 <!-- Price that will be charged displayed here. -->
               </div>
             </div>
-            <div class="row d-block justify-content-center align-items-center d-flex">
-              <button type="button" class="checkout btn btn-warning border-dark d-block" id="goBackBtn">Back to Contact Form</button>
-            </div>
           </div>
-          <div class="col-12 shopping-cart mt-5">
+          <div class="col-12" id="shopping-cart">
             <!-- Chosen Tour Card goes here -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-warning border-dark" data-dismiss="modal">Close</button>
           </div>
         </div> 
       </div>
     </div>
 
-   
-
-    <!-- PayPal and Google Calendar API scripts -->
+    <!-- PayPal API scripts -->
     <script src="https://www.paypalobjects.com/api/checkout.js"></script>
-    <!-- <script src="https://apis.google.com/js/api.js"></script>
-    <script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script> -->
-
+  
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script
-  src="https://code.jquery.com/jquery-3.3.1.js"
-  integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-  crossorigin="anonymous"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+      src="https://code.jquery.com/jquery-3.3.1.js"
+      integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+      crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
     <script src="app.js"></script>
   </body>
