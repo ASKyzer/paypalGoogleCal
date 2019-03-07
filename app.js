@@ -72,7 +72,6 @@ paypal.Button.render({
         const $form = $("#buyer-form");
         $.post($form.attr("action"), $form.serialize()).then(function() {
           alert("Thank you!");
-          clearForm('#buyer-form')
         });
          
       })
@@ -149,7 +148,7 @@ function purchasedTourInfo() {
 
 function openContactForm(e) {
   const buyerForm = document.querySelector('#buyer-form')
-
+  clearForm('#buyer-form')
   // Reset All Modal Contents and Displays
   modalTitle.innerText = ''
   modalContent.innerHTML = ''
