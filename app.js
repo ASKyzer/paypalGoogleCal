@@ -1,4 +1,8 @@
 let packagesData
+// Modal Elements IDs
+const modalContent = document.querySelector('#otdhModalContent')
+const modalTitle = document.querySelector('#checkoutModalTitle')
+const shoppingCart = document.querySelector('#shopping-cart')
 
 paypal.Button.render({
   env: 'sandbox', // sandbox | production
@@ -42,7 +46,7 @@ paypal.Button.render({
     // Order ID from PayPal payment so we can keep track of this particular purchase.
     const orderNumber = data.orderID
     // Get buyer and tour info
-    const buyer = getFormInputInfo("#buyer-form")
+    const buyer = getFormInputInfo('#buyer-form')
     const tour = purchasedTourInfo()
     // Convert numbered month to worded month and from yyyy-mm-dd format to month dd, yyyy format
     const date = convertDate(buyer.date)
@@ -68,17 +72,16 @@ paypal.Button.render({
         $.post($form.attr("action"), $form.serialize()).then(function() {
           alert("Thank you!");
         });
-          // Hide modals
-          hideCheckoutModal()
-          hideContactModal()
-          // Show thank you modal
-          showThankYouModal()
+         
       })
     }
   }, '#paypal-button-container')
 
 function writeThankYouNote(buyer, tour, date, orderNumber) {
-  const thankYou = document.querySelector('#thank-you')
+  shoppingCart.style.display = 'none'
+  modalTitle.innerText = 'Success! Thank You!'
+  togglePaypal()
+
   const thankYouModalMarkup = `
     <div class="p-3">
       <p>Dear ${buyer.firstName} ${buyer.lastName},</p>
@@ -113,7 +116,7 @@ function writeThankYouNote(buyer, tour, date, orderNumber) {
       </div>
     </div>
   `;
-  thankYou.innerHTML = thankYouModalMarkup
+  modalContent.innerHTML = thankYouModalMarkup
 }
 
 // jQuery serializeArray() to target form and put the name: value fields to return data object
@@ -125,7 +128,7 @@ function getFormInputInfo(formID) {
     return formData
 }
 
-// Retrieve the tour that the customer puchAsed
+// Retrieve the tour that the customer puchased
 function purchasedTourInfo() {
   const tourTitle = document.querySelector('#tour-title')
   const tourDescription = document.querySelector('#tour-description')
@@ -143,14 +146,26 @@ function purchasedTourInfo() {
 }
 
 function openContactForm(e) {
+  const buyerForm = document.querySelector('#buyer-form')
+
+  // Reset All Modal Contents and Displays
+  modalTitle.innerText = ''
+  modalContent.innerHTML = ''
+  buyerForm.style.display = 'block'
+  shoppingCart.style.display = 'block'
+
+  if (e.target.id === 'purchase-tour') {
+    $('#otdhModal').modal('show');
+  }
+  modalTitle.innerText = "Please enter your contact information"
   const tour = getChosenTourInfo(e)
   addTourToCheckout(tour)
+  displayDeposit(tour)
   preventPastDate()
   // Event Listener to submit form
-  const buyerForm = document.querySelector('#buyer-form')
   buyerForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    checkOut()
+    checkOut(modalContent)
   });
   // Listen for Clear Form click
   const clearBuyerFormBtn = document.querySelector('#clear-buyer-form')
@@ -166,19 +181,8 @@ function clearForm(formID) {
   inputs.forEach(i => i.value = '')
 }
 
-// Modal Actions
-function toggleContactModal() { $('#contactModal').modal('toggle') }
-function hideContactModal() { $('#contactModal').modal('hide') }
-function showContactModal() { $('#contactModal').modal('show') }
-function toggleCheckoutModal() { $('#checkoutModal').modal('toggle') }
-function hideCheckoutModal() { $('#checkoutModal').modal('hide') }
-function showCheckoutModal() { $('#checkoutModal').modal('show') }
-function showThankYouModal() { $('#thankYouModal').modal('show') }
-
 // with chosen tour, display it on the contact form and checkout form
 function addTourToCheckout(tour) {
-  const shoppingCart = document.querySelectorAll('.shopping-cart')
-  const depositCharged = document.querySelector('.cost-charged')
   const deposit = parseFloat(tour.price * .2).toFixed(2)
   const price = parseFloat(tour.price).toFixed(2)
   if (tour) {
@@ -197,14 +201,19 @@ function addTourToCheckout(tour) {
         </div>
       </div>
       `
-      shoppingCart.forEach(el => el.innerHTML = markup)
+      shoppingCart.innerHTML = markup
+  }
+}
 
-    const markupDepositCharged = `
+function displayDeposit(tour) {
+  const depositCharged = document.querySelector('.cost-charged')
+  const deposit = parseFloat(tour.price * .2).toFixed(2)
+
+  const markupDepositCharged = `
       <p>You will be charged a deposit of:</P
       <p class="font-weight-bold text-h4">$${deposit} USD</p>
     `
       depositCharged.innerHTML = markupDepositCharged
-  }
 }
 
 function getChosenTourInfo(e) {
@@ -214,29 +223,39 @@ function getChosenTourInfo(e) {
 }
 
 // Retrieve Customer info form the contact cards and display in the checkout form
-function addCustomerToCheckout() {
-  const customer = document.querySelector('.customer-info')
+function addCustomerToCheckout(modalContent) {
+  // const customer = document.querySelector('.customer-info')
   const buyer = getFormInputInfo("#buyer-form")
   const date = convertDate(buyer.date)
 
   const markupTourCard = `
-    <h4 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h4>
-    <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
-    <p class="m-0 mt-1"><span class="customer-email">${buyer.email}</span></p>
-    <p class="m-0 mb-3"><span class="customer-phone">+${buyer.phone}</span></p><br>
-    <h5>Tour Date: &nbsp;<span class="tour-date">${date}</span></h5>
+    <div class="pl-3 pr-3">
+      <h5 class="m-0 mt-3 mb-3 text-underline">Contact Information:</h5>
+      <p class="m-0"><span class="customer-first-name">${buyer.firstName}</span>&nbsp;<span class="customer-last-name">${buyer.lastName}</span></p>
+      <p class="m-0 mt-1"><span class="customer-email">${buyer.email}</span></p>
+      <p class="m-0 mb-3"><span class="customer-phone">+${buyer.phone}</span></p><br>
+      <h5 class="m-0 p-0">Tour Date: &nbsp;<span class="tour-date">${date}</span></h5>
+    </div>
   `;
-  customer.innerHTML = markupTourCard
+    modalContent.innerHTML = markupTourCard
 }
 
 // Hide contact modal and show the checkout modal with paypal buttons
-function checkOut(){
-  addCustomerToCheckout()
-  toggleCheckoutModal()
-  toggleContactModal()
-  // Go back button closes the checkout modal and returns to the contact form
-  const goBackBtn = document.querySelector('#goBackBtn')
-  goBackBtn.addEventListener('click', toggleContactModal)
+function checkOut(modalContent){
+  const buyerForm = document.querySelector('#buyer-form')
+  buyerForm.style.display= 'none'
+  modalTitle.innerText = 'Checkout'
+  addCustomerToCheckout(modalContent)
+  togglePaypal()
+}
+
+function togglePaypal() {
+  const paypalPayment = document.querySelector('#paypalCheckout')
+  if (paypalPayment.style.display === 'none') {
+    paypalPayment.style.display = 'block'
+  } else {
+    paypalPayment.style.display = 'none'
+  }
 }
 
 function preventPastDate() {
@@ -337,8 +356,11 @@ function convertDate(date) {
 function init() {
   const token = '60ce28d9190500bbe827ebb7766ffa'
   const cardsContainer = document.querySelector('#tour-cards')
+  const paypalPayment = document.querySelector('#paypalCheckout')
   getPackages(token, cardsContainer)
   cardsContainer.addEventListener('click', openContactForm)
+  $('#otdhModal').modal('hide');
+  paypalPayment.style.display = 'none';
 }
 init()
 
