@@ -73,7 +73,7 @@ paypal.Button.render({
         $.post($form.attr("action"), $form.serialize()).then(function() {
           alert("Thank you!");
         });
-        init()
+        $form.reset()
       })
     }
   }, '#paypal-button-container')
