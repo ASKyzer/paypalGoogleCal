@@ -66,6 +66,7 @@ paypal.Button.render({
     description.value = tourDetails
 
     writeThankYouNote(buyer, tour, date, orderNumber)
+    clearForm('#buyer-form')
 
     return actions.payment.execute()
       .then(function () {
