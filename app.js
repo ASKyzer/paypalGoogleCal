@@ -72,6 +72,7 @@ paypal.Button.render({
         const $form = $("#buyer-form");
         $.post($form.attr("action"), $form.serialize()).then(function() {
           alert("Thank you!");
+          // reset the form so it can be serialized again for next purchase
           document.getElementById('buyer-form').reset()
         });
       })
