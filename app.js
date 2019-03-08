@@ -72,8 +72,8 @@ paypal.Button.render({
         const $form = $("#buyer-form");
         $.post($form.attr("action"), $form.serialize()).then(function() {
           alert("Thank you!");
+          $form.reset()
         });
-        $form.reset()
       })
     }
   }, '#paypal-button-container')
